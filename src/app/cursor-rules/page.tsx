@@ -8,6 +8,9 @@ export default async function CursorRulesPage() {
     .select("*")
     .returns<CursorRule[]>();
 
+  // Ensure rules is always an array
+  const safeRules: CursorRule[] = rules ?? [];
+
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
@@ -24,7 +27,7 @@ export default async function CursorRulesPage() {
         {/* We'll add search and filter components here later */}
       </div>
 
-      <CursorRulesList rules={rules} />
+      <CursorRulesList rules={safeRules} />
     </main>
   );
 }

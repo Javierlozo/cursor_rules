@@ -12,9 +12,20 @@ export default function CursorRulesList({
 }) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  if (!Array.isArray(rules)) {
-    console.error("Rules is not an array:", rules);
-    return <div>No rules found</div>;
+  if (!rules.length) {
+    return (
+      <div className="text-center py-12 bg-gray-800/50 rounded-xl border border-gray-700">
+        <p className="text-gray-400 text-lg">
+          No rules found. Be the first to create one!
+        </p>
+        <Link
+          href="/cursor-rules/create"
+          className="inline-block mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+        >
+          Create Rule
+        </Link>
+      </div>
+    );
   }
 
   const copyRuleContent = async (id: string, content: string) => {
