@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cursor Rules Hub
+
+A community-driven platform for sharing and discovering AI behavior rules for the [Cursor Editor](https://cursor.sh). This platform allows developers to create, share, and browse custom rules that enhance the Cursor AI's capabilities.
+
+## About the Project
+
+Cursor Rules Hub is built to help developers:
+
+- Share effective AI behavior rules with the community
+- Discover rules for specific frameworks or coding patterns
+- Customize how Cursor AI interacts with their code
+- Learn best practices for writing Cursor rules
+
+## Features
+
+- 🔍 Browse and search community-created rules
+- ✨ Create and share your own rules
+- 📁 File pattern matching for rule application
+- 🔗 Reference other files in your rules
+- 💾 Easy copy-and-paste rule installation
+- 🎨 Dark mode interface matching Cursor's theme
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
+
+```bash
+git clone https://github.com/yourusername/cursor-rules-hub.git
+cd cursor-rules-hub
+```
+
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up environment variables:
+
+```bash
+cp .env.example .env.local
+# Edit .env.local with your Supabase credentials
+```
+
+4. Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Using Rules
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To use a rule from Cursor Rules Hub:
 
-## Learn More
+1. Browse or search for a rule
+2. Copy the rule content
+3. Create a new file in your project's `.cursor/rules` directory
+4. Paste the rule content and save
+5. Restart Cursor to apply the new rule
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+We welcome contributions! Here's how you can help:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Share your useful rules
+2. Report bugs and suggest features
+3. Improve documentation
+4. Submit pull requests
 
-## Deploy on Vercel
+Please read our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js 14](https://nextjs.org/) - React Framework
+- [Supabase](https://supabase.com/) - Backend and Database
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [TypeScript](https://www.typescriptlang.org/) - Type Safety
+- [React Icons](https://react-icons.github.io/react-icons/) - Icons
+
+## Project Structure
+
+```
+src/
+├── app/                 # Next.js app router pages
+├── components/         # Reusable React components
+├── lib/               # Utilities and configurations
+│   ├── supabase.ts   # Supabase client setup
+│   └── types/        # TypeScript types
+├── db/                # Database schemas and migrations
+└── docs/             # Documentation
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- [Cursor Editor](https://cursor.sh) team for creating an amazing AI-powered editor
+- All contributors who share their rules with the community
+
+## Contact
+
+- GitHub: [Your GitHub Profile](https://github.com/yourusername)
+- Twitter: [@YourTwitter](https://twitter.com/yourtwitter)
+
+Built with ❤️ for the Cursor community
