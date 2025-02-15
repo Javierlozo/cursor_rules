@@ -105,5 +105,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - GitHub: [Your GitHub Profile](https://github.com/yourusername)
 - Twitter: [@YourTwitter](https://twitter.com/yourtwitter)
-
-Built with ❤️ for the Cursor community

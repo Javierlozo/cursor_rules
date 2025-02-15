@@ -128,10 +128,6 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 pt-4 border-t border-gray-800 text-center text-sm text-gray-400 bg-gray-800/50 rounded-xl p-4">
-          <p className="flex items-center justify-center gap-1">
-            Built with <FiHeart className="text-red-400" /> for the Cursor
-            community
-          </p>
           <p className="mt-1">
             © {new Date().getFullYear()} Cursor Rules Hub. Not affiliated with
             Cursor Editor.
