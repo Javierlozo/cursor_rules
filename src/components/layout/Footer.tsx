@@ -1,11 +1,5 @@
 import Link from "next/link";
-import {
-  FiGithub,
-  FiTwitter,
-  FiMail,
-  FiHeart,
-  FiDownload,
-} from "react-icons/fi";
+import { FiGithub, FiTwitter, FiMail, FiDownload } from "react-icons/fi";
 
 export default function Footer() {
   return (
