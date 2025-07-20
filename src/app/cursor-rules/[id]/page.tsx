@@ -3,18 +3,14 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { CursorRule, User } from "@/lib/types/cursor-rule";
+import { CursorRule } from "@/lib/types/cursor-rule";
 import { FiArrowLeft, FiCopy, FiCheck, FiDownload, FiUser, FiClock, FiCode, FiFile, FiTag } from "react-icons/fi";
 import Link from "next/link";
-
-interface RuleWithCreator extends CursorRule {
-  creator?: User;
-}
 
 export default function CursorRuleDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const [rule, setRule] = useState<RuleWithCreator | null>(null);
+  const [rule, setRule] = useState<CursorRule | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
@@ -25,18 +21,10 @@ export default function CursorRuleDetailPage() {
         setLoading(true);
         const ruleId = params.id as string;
 
-        // Fetch the rule with creator information
+        // Fetch the rule without join
         const { data: ruleData, error: ruleError } = await supabase
           .from("cursor_rules")
-          .select(`
-            *,
-            creator:created_by(
-              id,
-              email,
-              username,
-              created_at
-            )
-          `)
+          .select("*")
           .eq("id", ruleId)
           .single();
 
@@ -145,14 +133,14 @@ export default function CursorRuleDetailPage() {
           <h1 className="text-4xl font-bold text-white mb-4">{rule.name}</h1>
           
           {/* Creator Information */}
-          {rule.creator && (
+          {rule.created_by && (
             <div className="flex items-center gap-3 mb-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                 <FiUser className="w-5 h-5 text-white" />
               </div>
               <div>
                 <p className="text-white font-medium">
-                  Created by {rule.creator.username || rule.creator.email}
+                  Created by {rule.created_by}
                 </p>
                 <p className="text-sm text-gray-400">
                   {new Date(rule.created_at).toLocaleDateString()}
@@ -227,11 +215,11 @@ export default function CursorRuleDetailPage() {
             </div>
 
             {/* References */}
-            {rule.references && rule.references.length > 0 && (
+            {rule.file_references && rule.file_references.length > 0 && (
               <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
                 <h2 className="text-xl font-semibold text-white mb-4">Referenced Files</h2>
                 <ul className="space-y-2">
-                  {rule.references.map((ref, index) => (
+                  {rule.file_references.map((ref: string, index: number) => (
                     <li
                       key={index}
                       className="flex items-center gap-2 text-gray-300"
