@@ -37,12 +37,22 @@ npm install
 
 3. Set up environment variables:
 
+Create a `.env.local` file in the root directory with your Supabase credentials:
+
 ```bash
-cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-4. Run the development server:
+**Important:** Never commit your `.env.local` file to version control. It's already in `.gitignore`.
+
+4. Set up the database:
+
+Run the SQL commands in `src/db/schema.sql` in your Supabase SQL editor to create the necessary tables.
+
+5. Run the development server:
 
 ```bash
 npm run dev
