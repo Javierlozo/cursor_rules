@@ -18,6 +18,7 @@ export default function CursorRulesPage() {
         const { data } = await supabase
           .from("cursor_rules")
           .select("*")
+          .not("created_by", "is", null) // Filter out orphaned rules
           .returns<CursorRule[]>();
 
         const safeRules = data ?? [];

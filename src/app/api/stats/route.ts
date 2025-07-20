@@ -3,10 +3,11 @@ import { supabase } from "@/lib/supabase";
 
 export async function GET() {
   try {
-    // Get total rules count
+    // Get total rules count (excluding orphaned rules)
     const { count: totalRules } = await supabase
       .from("cursor_rules")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true })
+      .not("created_by", "is", null);
 
     // Get total downloads
     const { data: downloadsData } = await supabase
@@ -24,11 +25,12 @@ export async function GET() {
       .select("created_by")
       .not("created_by", "is", null);
 
-    // Get top categories
+    // Get top categories (excluding orphaned rules)
     const { data: categoriesData } = await supabase
       .from("cursor_rules")
       .select("category")
-      .not("category", "is", null);
+      .not("category", "is", null)
+      .not("created_by", "is", null);
 
     // Calculate statistics
     const totalDownloads = downloadsData?.length || 0;
@@ -48,10 +50,11 @@ export async function GET() {
       .slice(0, 5)
       .map(([name, count]) => ({ name, count }));
 
-    // Get recent rules
+    // Get recent rules (excluding orphaned rules)
     const { data: recentRules } = await supabase
       .from("cursor_rules")
       .select("*")
+      .not("created_by", "is", null)
       .order("created_at", { ascending: false })
       .limit(5);
 

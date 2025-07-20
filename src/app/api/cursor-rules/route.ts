@@ -15,7 +15,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("cursor_rules")
-      .select("*");
+      .select("*")
+      .not("created_by", "is", null); // Filter out orphaned rules
 
     // Apply filters
     if (category) {
