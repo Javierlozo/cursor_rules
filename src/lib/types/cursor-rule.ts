@@ -27,7 +27,7 @@ export interface CursorRule {
   description: string | null;
   pattern: string | null;
   rule_content: string;
-  references: string[];
+  file_references: string[];
   tags: string[];
   category: string | null;
   framework: string | null;
@@ -43,7 +43,7 @@ export interface CreateRuleData {
   description?: string;
   pattern?: string;
   rule_content: string;
-  references?: string[];
+  file_references?: string[];
   tags?: string[];
   category?: string;
   framework?: string;

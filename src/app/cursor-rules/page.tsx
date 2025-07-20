@@ -15,20 +15,20 @@ export default function CursorRulesPage() {
   useEffect(() => {
     const fetchRules = async () => {
       try {
-        const { data } = await supabase
+        console.log("Fetching rules...");
+        const { data, error } = await supabase
           .from("cursor_rules")
-          .select(`
-            *,
-            creator:created_by(
-              id,
-              email,
-              username
-            )
-          `)
-          .not("created_by", "is", null) // Filter out orphaned rules
-          .returns<CursorRule[]>();
+          .select("*");
+
+        console.log("Supabase response:", { data, error });
+
+        if (error) {
+          console.error("Error fetching rules:", error);
+          return;
+        }
 
         const safeRules = data ?? [];
+        console.log("Setting rules:", safeRules);
         setRules(safeRules);
         setFilteredRules(safeRules);
       } catch (error) {

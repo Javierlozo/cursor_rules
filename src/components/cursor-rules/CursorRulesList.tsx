@@ -2,17 +2,13 @@
 
 import Link from "next/link";
 import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiDownload, FiUser } from "react-icons/fi";
-import { CursorRule, User } from "@/lib/types/cursor-rule";
+import { CursorRule } from "@/lib/types/cursor-rule";
 import { useState } from "react";
-
-interface CursorRuleWithCreator extends CursorRule {
-  creator?: User;
-}
 
 export default function CursorRulesList({
   rules = [],
 }: {
-  rules: CursorRuleWithCreator[];
+  rules: CursorRule[];
 }) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -83,12 +79,12 @@ export default function CursorRulesList({
                 <span>
                   Added {new Date(rule.created_at).toLocaleDateString()}
                 </span>
-                {rule.creator && (
+                {rule.created_by && (
                   <>
                     <span className="text-gray-500">•</span>
                     <FiUser className="w-4 h-4" />
                     <span>
-                      by {rule.creator.username || rule.creator.email}
+                      by {rule.created_by}
                     </span>
                   </>
                 )}
@@ -149,13 +145,13 @@ export default function CursorRulesList({
             </div>
 
             {/* References */}
-            {rule.references && rule.references.length > 0 && (
+            {rule.file_references && rule.file_references.length > 0 && (
               <div className="bg-gray-900/50 p-4 rounded-lg">
                 <h4 className="text-sm font-medium text-gray-300 mb-2">
                   Referenced Files
                 </h4>
                 <ul className="space-y-1">
-                  {rule.references.map((ref, index) => (
+                  {rule.file_references.map((ref: string, index: number) => (
                     <li
                       key={index}
                       className="text-sm text-gray-400 truncate flex items-center gap-2"
