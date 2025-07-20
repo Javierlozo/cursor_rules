@@ -1,0 +1,183 @@
+# React TypeScript Component Pattern
+
+When creating React components with TypeScript, follow these patterns and best practices:
+
+## Component Structure
+
+### Functional Components
+- Always use functional components with hooks
+- Use TypeScript interfaces for all props
+- Implement proper error boundaries for complex components
+- Use meaningful component and prop names
+
+### Props Interface Pattern
+```typescript
+interface ComponentProps {
+  title: string;
+  description?: string;
+  children?: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  disabled?: boolean;
+}
+```
+
+### Component Template
+```typescript
+import React from 'react';
+
+interface ComponentProps {
+  title: string;
+  description?: string;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export const Component: React.FC<ComponentProps> = ({
+  title,
+  description,
+  children,
+  className = ''
+}) => {
+  return (
+    <div className={`component ${className}`}>
+      <h2>{title}</h2>
+      {description && <p>{description}</p>}
+      {children}
+    </div>
+  );
+};
+```
+
+## State Management
+
+### useState Pattern
+```typescript
+const [state, setState] = useState<StateType>(initialValue);
+const [loading, setLoading] = useState<boolean>(false);
+const [data, setData] = useState<DataType | null>(null);
+```
+
+### useRef Pattern
+```typescript
+const inputRef = useRef<HTMLInputElement>(null);
+const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+```
+
+## Event Handlers
+
+### Click Handler Pattern
+```typescript
+const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  event.preventDefault();
+  // Handle click logic
+};
+```
+
+### Form Handler Pattern
+```typescript
+const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  event.preventDefault();
+  // Handle form submission
+};
+```
+
+## Custom Hooks
+
+### Custom Hook Pattern
+```typescript
+interface UseCustomHookReturn {
+  data: DataType | null;
+  loading: boolean;
+  error: string | null;
+  fetchData: () => Promise<void>;
+}
+
+const useCustomHook = (): UseCustomHookReturn => {
+  const [data, setData] = useState<DataType | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      // API call logic
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { data, loading, error, fetchData };
+};
+```
+
+## Best Practices
+
+### Naming Conventions
+- Use PascalCase for component names: `UserProfile`, `ProductCard`
+- Use camelCase for props and variables: `userName`, `productId`
+- Use descriptive names that explain purpose
+
+### Type Safety
+- Always define TypeScript interfaces for props
+- Use proper type annotations for state and refs
+- Avoid `any` type - use specific types or `unknown`
+- Use union types for multiple possible values
+
+### Performance
+- Use React.memo for expensive components
+- Implement proper dependency arrays in useEffect
+- Use useCallback for event handlers passed as props
+- Use useMemo for expensive calculations
+
+### Error Handling
+- Implement error boundaries for complex components
+- Use try-catch blocks for async operations
+- Provide meaningful error messages
+- Handle loading and error states
+
+### Accessibility
+- Use semantic HTML elements
+- Include proper ARIA attributes
+- Ensure keyboard navigation support
+- Provide alt text for images
+
+## Common Patterns
+
+### Conditional Rendering
+```typescript
+{isLoading && <Spinner />}
+{error && <ErrorMessage message={error} />}
+{data && <DataDisplay data={data} />}
+```
+
+### List Rendering
+```typescript
+{items.map((item) => (
+  <ListItem key={item.id} item={item} />
+))}
+```
+
+### Form Components
+```typescript
+const [formData, setFormData] = useState<FormData>({
+  name: '',
+  email: '',
+  message: ''
+});
+
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  setFormData(prev => ({ ...prev, [name]: value }));
+};
+```
+
+## File Organization
+- One component per file
+- Export components as named exports
+- Use index files for barrel exports
+- Keep components focused and single-purpose

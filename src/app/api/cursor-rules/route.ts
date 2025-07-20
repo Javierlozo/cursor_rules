@@ -63,6 +63,25 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.substring(7);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "Invalid authentication token" },
+        { status: 401 }
+      );
+    }
+
     const body: CreateRuleData = await request.json();
 
     // Validation
@@ -86,13 +105,18 @@ export async function POST(request: NextRequest) {
       description: body.description?.trim() || null,
       pattern: body.pattern?.trim() || null,
       rule_content: body.rule_content.trim(),
-      references: body.references || [],
+      file_references: body.references || [],
       tags: body.tags || [],
       category: body.category || null,
       framework: body.framework || null,
       downloads: 0,
       likes: 0,
-      created_by: null, // TODO: Add user authentication
+      created_by: user.id, // Set the authenticated user
+      cursor_properties: {
+        color: '#3B82F6',
+        size: 'medium',
+        shape: 'default'
+      }
     };
 
     const { data, error } = await supabase
@@ -109,6 +133,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log("Rule created successfully:", data.name);
     return NextResponse.json(data, { status: 201 });
   } catch (err) {
     console.error("Unexpected error:", err);

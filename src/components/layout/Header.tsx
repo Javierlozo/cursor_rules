@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   FiHome,
   FiPlus,
@@ -14,11 +15,14 @@ import {
   FiX,
   FiDownload,
   FiFileText,
+  FiUser,
+  FiLogOut,
 } from "react-icons/fi";
 
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const isActive = (path: string) => {
     return pathname === path ? "text-blue-500" : "text-gray-600";
@@ -100,6 +104,49 @@ export default function Header() {
                 </Link>
               )
             )}
+            
+            {/* Auth Section */}
+            <div className="flex items-center gap-4 ml-6">
+              {user && (
+                <Link
+                  href="/cursor-rules/my-rules"
+                  className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition"
+                >
+                  <FiUser className="w-4 h-4" />
+                  <span>My Rules</span>
+                </Link>
+              )}
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-gray-300 text-sm">
+                    {user.email}
+                  </span>
+                  <button
+                    onClick={() => signOut()}
+                    className="flex items-center gap-2 text-gray-300 hover:text-red-400 transition"
+                  >
+                    <FiLogOut className="w-4 h-4" />
+                    <span className="hidden sm:inline">Sign Out</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/auth/signin"
+                    className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition"
+                  >
+                    <FiUser className="w-4 h-4" />
+                    <span>Sign In</span>
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="bg-blue-500 text-white px-3 py-2 rounded-lg hover:bg-blue-600 transition text-sm"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
