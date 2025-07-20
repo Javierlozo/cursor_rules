@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import UserStats from "./UserStats";
 import {
   FiHome,
   FiPlus,
@@ -163,6 +164,11 @@ export default function Header() {
                         </div>
                       </div>
                       
+                      {/* User Stats */}
+                      <div className="p-4 border-b border-gray-700">
+                        <UserStats />
+                      </div>
+                      
                       {/* User Actions */}
                       <div className="p-2">
                         <Link
@@ -282,6 +288,11 @@ export default function Header() {
                           <p className="text-sm text-gray-400 truncate">{user.email}</p>
                         </div>
                       </div>
+                    </div>
+                    
+                    {/* Mobile User Stats */}
+                    <div className="px-2 mb-4">
+                      <UserStats />
                     </div>
                     
                     {/* Mobile User Actions */}
