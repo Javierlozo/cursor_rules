@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   FiHome,
@@ -16,12 +16,31 @@ import {
   FiFileText,
   FiUser,
   FiLogOut,
+  FiChevronDown,
+  FiSettings,
+  FiEdit,
 } from "react-icons/fi";
 
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsUserDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const isActive = (path: string) => {
     return pathname === path ? "text-blue-500" : "text-gray-600";
@@ -106,27 +125,64 @@ export default function Header() {
             
             {/* Auth Section */}
             <div className="flex items-center gap-4 ml-6">
-              {user && (
-                <Link
-                  href="/cursor-rules/my-rules"
-                  className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition"
-                >
-                  <FiUser className="w-4 h-4" />
-                  <span>My Rules</span>
-                </Link>
-              )}
               {user ? (
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-300 text-sm">
-                    {user.email}
-                  </span>
+                <div className="relative" ref={dropdownRef}>
+                  {/* User Dropdown Button */}
                   <button
-                    onClick={() => signOut()}
-                    className="flex items-center gap-2 text-gray-300 hover:text-red-400 transition"
+                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                    className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition px-3 py-2 rounded-lg hover:bg-gray-800"
                   >
-                    <FiLogOut className="w-4 h-4" />
-                    <span className="hidden sm:inline">Sign Out</span>
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <FiUser className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="hidden sm:inline text-sm font-medium">
+                      {user.email?.split('@')[0] || 'User'}
+                    </span>
+                    <FiChevronDown className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
+
+                  {/* User Dropdown Menu */}
+                  {isUserDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50">
+                      <div className="p-4 border-b border-gray-700">
+                        <p className="text-sm text-gray-400">Signed in as</p>
+                        <p className="text-white font-medium truncate">{user.email}</p>
+                      </div>
+                      
+                      <div className="p-2">
+                        <Link
+                          href="/cursor-rules/my-rules"
+                          className="flex items-center gap-3 w-full px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <FiEdit className="w-4 h-4" />
+                          <span>My Rules</span>
+                        </Link>
+                        
+                        <Link
+                          href="/cursor-rules/create"
+                          className="flex items-center gap-3 w-full px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <FiPlus className="w-4 h-4" />
+                          <span>Create Rule</span>
+                        </Link>
+                        
+                        <div className="border-t border-gray-700 my-2"></div>
+                        
+                        <button
+                          onClick={() => {
+                            signOut();
+                            setIsUserDropdownOpen(false);
+                          }}
+                          className="flex items-center gap-3 w-full px-3 py-2 text-gray-300 hover:text-red-400 hover:bg-gray-700 rounded-md transition"
+                        >
+                          <FiLogOut className="w-4 h-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
@@ -192,6 +248,47 @@ export default function Header() {
                     <span>{link.label}</span>
                   </Link>
                 )
+              )}
+              
+              {/* Mobile User Section */}
+              {user && (
+                <>
+                  <div className="border-t border-gray-700 pt-4 mt-4">
+                    <div className="px-2 mb-3">
+                      <p className="text-xs text-gray-400">Signed in as</p>
+                      <p className="text-sm text-white font-medium truncate">{user.email}</p>
+                    </div>
+                    
+                    <Link
+                      href="/cursor-rules/my-rules"
+                      className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition px-2 py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <FiEdit className="w-4 h-4" />
+                      <span>My Rules</span>
+                    </Link>
+                    
+                    <Link
+                      href="/cursor-rules/create"
+                      className="flex items-center gap-2 text-gray-300 hover:text-blue-400 transition px-2 py-2"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <FiPlus className="w-4 h-4" />
+                      <span>Create Rule</span>
+                    </Link>
+                    
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="flex items-center gap-2 text-gray-300 hover:text-red-400 transition px-2 py-2 w-full text-left"
+                    >
+                      <FiLogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </>
               )}
             </div>
           </div>
