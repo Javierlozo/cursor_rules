@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CreateRuleData } from "@/lib/types/cursor-rule";
+import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { CreateRuleData } from "@/lib/types/cursor-rule";
 
 const CATEGORIES = [
   "React", "Node.js", "TypeScript", "Testing", "UI/UX", 
@@ -17,9 +17,10 @@ const FRAMEWORKS = [
   "Laravel", "Ruby on Rails", "Spring", "ASP.NET"
 ];
 
-export default function CreateRulePage() {
+export default function EditRulePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params = useParams();
+  const ruleId = params.id as string;
   const { user, loading } = useAuth();
   
   const [formData, setFormData] = useState<CreateRuleData>({
@@ -33,32 +34,55 @@ export default function CreateRulePage() {
     framework: "",
   });
 
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Load template data from URL parameters
   useEffect(() => {
-    const name = searchParams.get('name');
-    const description = searchParams.get('description');
-    const pattern = searchParams.get('pattern');
-    const category = searchParams.get('category');
-    const framework = searchParams.get('framework');
-    const tags = searchParams.get('tags');
-    const content = searchParams.get('content');
-
-    if (name || description || pattern || category || framework || tags || content) {
-      setFormData({
-        name: name || "",
-        description: description || "",
-        pattern: pattern || "",
-        rule_content: content || "",
-        references: [],
-        tags: tags ? tags.split(',') : [],
-        category: category || "",
-        framework: framework || "",
-      });
+    if (!loading && !user) {
+      router.push('/auth/signin');
+      return;
     }
-  }, [searchParams]);
+
+    if (user && ruleId) {
+      fetchRule();
+    }
+  }, [user, loading, ruleId]);
+
+  const fetchRule = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("cursor_rules")
+        .select("*")
+        .eq("id", ruleId)
+        .eq("created_by", user?.id) // Security: only fetch user's own rules
+        .single();
+
+      if (error) {
+        console.error("Error fetching rule:", error);
+        setError("Rule not found or you don't have permission to edit it");
+        return;
+      }
+
+      if (data) {
+        setFormData({
+          name: data.name,
+          description: data.description || "",
+          pattern: data.pattern || "",
+          rule_content: data.rule_content,
+          references: data.file_references || [],
+          tags: data.tags || [],
+          category: data.category || "",
+          framework: data.framework || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      setError("Failed to load rule");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,13 +94,13 @@ export default function CreateRulePage() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.access_token) {
-        setError("You must be logged in to create rules");
+        setError("You must be logged in to edit rules");
         setIsSubmitting(false);
         return;
       }
 
-      const res = await fetch("/api/cursor-rules", {
-        method: "POST",
+      const res = await fetch(`/api/cursor-rules/${ruleId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${session.access_token}`,
@@ -85,10 +109,10 @@ export default function CreateRulePage() {
       });
 
       if (res.ok) {
-        router.push("/cursor-rules");
+        router.push("/cursor-rules/my-rules");
       } else {
         const errorData = await res.json();
-        setError(errorData.error || "Failed to create rule");
+        setError(errorData.error || "Failed to update rule");
       }
     } catch (error) {
       setError("Network error. Please try again.");
@@ -114,7 +138,7 @@ export default function CreateRulePage() {
   };
 
   // Show loading state
-  if (loading) {
+  if (loading || isLoading) {
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="text-center">
@@ -125,39 +149,39 @@ export default function CreateRulePage() {
     );
   }
 
-  // Show login required message
+  // Show sign-in required
   if (!user) {
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-            <p className="text-gray-400 mb-6">
-              You need to be logged in to create and share cursor rules with the community.
-            </p>
-          </div>
-          
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
-            <h2 className="text-xl font-semibold mb-4">Join the Community</h2>
-            <p className="text-gray-400 mb-6">
-              Create an account to start sharing your cursor rules and help other developers.
-            </p>
-            
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={() => router.push('/auth/signin')}
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => router.push('/auth/signup')}
-                className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
-              >
-                Sign Up
-              </button>
-            </div>
-          </div>
+          <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
+          <p className="text-gray-400 mb-6">
+            You need to be logged in to edit rules.
+          </p>
+          <button
+            onClick={() => router.push('/auth/signin')}
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+          >
+            Sign In
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  // Show error state
+  if (error && !isLoading) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-3xl font-bold mb-4">Error</h1>
+          <p className="text-gray-400 mb-6">{error}</p>
+          <button
+            onClick={() => router.push('/cursor-rules/my-rules')}
+            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+          >
+            Back to My Rules
+          </button>
         </div>
       </main>
     );
@@ -167,18 +191,18 @@ export default function CreateRulePage() {
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Create Cursor Rule</h1>
+          <h1 className="text-3xl font-bold">Edit Rule</h1>
           <a
-            href="/cursor-rules/templates"
+            href="/cursor-rules/my-rules"
             className="text-blue-500 hover:text-blue-600 transition"
           >
-            Browse Templates →
+            ← Back to My Rules
           </a>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">{error}</p>
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-700/30 rounded-lg">
+            <p className="text-red-300">{error}</p>
           </div>
         )}
 
@@ -276,13 +300,13 @@ export default function CreateRulePage() {
               {(formData.tags || []).map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-sm"
                 >
                   {tag}
                   <button
                     type="button"
                     onClick={() => removeTag(tag)}
-                    className="ml-1 text-blue-600 hover:text-blue-800"
+                    className="ml-1 text-blue-400 hover:text-blue-200"
                   >
                     ×
                   </button>
@@ -317,24 +341,24 @@ export default function CreateRulePage() {
               placeholder="Enter your rule content here..."
               required
             />
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-2 text-sm text-gray-400">
               This is the actual rule that will be applied to Cursor AI. Use clear, specific instructions.
             </p>
           </div>
 
-          {/* Submit Button */}
+          {/* Submit Buttons */}
           <div className="flex gap-4">
             <button
               type="submit"
               disabled={isSubmitting}
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? "Creating..." : "Create Rule"}
+              {isSubmitting ? "Updating..." : "Update Rule"}
             </button>
             <button
               type="button"
-              onClick={() => router.back()}
-              className="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-200 transition"
+              onClick={() => router.push('/cursor-rules/my-rules')}
+              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition"
             >
               Cancel
             </button>
@@ -343,4 +367,4 @@ export default function CreateRulePage() {
       </div>
     </main>
   );
-}
+} 

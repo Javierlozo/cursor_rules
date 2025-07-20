@@ -5,13 +5,14 @@ CREATE TABLE cursor_rules (
     description TEXT,
     pattern VARCHAR(255), -- File pattern matching (e.g., "*.tsx")
     rule_content TEXT NOT NULL, -- The actual rule content
-    references TEXT[], -- Array of referenced files
+    file_references TEXT[], -- Array of referenced files
     tags TEXT[], -- Array of tags for categorization
     category VARCHAR(100), -- Main category (e.g., "React", "Node.js", "Testing")
     framework VARCHAR(100), -- Framework this rule is for
     downloads INTEGER DEFAULT 0, -- Number of times downloaded
     likes INTEGER DEFAULT 0, -- Number of likes
     created_by UUID,
+    cursor_properties JSONB DEFAULT '{"color": "#3B82F6", "size": "medium", "shape": "default"}'::jsonb,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
