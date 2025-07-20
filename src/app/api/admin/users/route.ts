@@ -11,6 +11,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Check if admin client is available
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: "Admin service not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');
@@ -41,27 +49,28 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all users using admin client
-    const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers();
+    const { data: { users }, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
     
-    if (error) {
-      console.error("Error fetching users:", error);
+    if (usersError) {
+      console.error("Error fetching users:", usersError);
       return NextResponse.json(
         { error: "Failed to fetch users" },
         { status: 500 }
       );
     }
 
-    // Transform users to include role information
-    const transformedUsers = users.map(u => ({
+    // Return user list with basic info
+    const userList = users.map((u: any) => ({
       id: u.id,
       email: u.email,
-      username: u.user_metadata?.username,
+      username: u.user_metadata?.username || null,
+      role: u.user_metadata?.role || 'user',
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
-      role: u.user_metadata?.role || "user"
+      email_confirmed_at: u.email_confirmed_at
     }));
 
-    return NextResponse.json({ users: transformedUsers });
+    return NextResponse.json(userList);
 
   } catch (err) {
     console.error("Unexpected error:", err);
@@ -151,11 +160,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   // Prevent execution during build time
   if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json(
       { error: "Service not available" },
+      { status: 503 }
+    );
+  }
+
+  // Check if admin client is available
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: "Admin service not configured" },
       { status: 503 }
     );
   }
@@ -200,23 +217,20 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update user role using admin client
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-      user_metadata: { role: role }
-    });
+    const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+      userId,
+      { user_metadata: { role } }
+    );
 
-    if (error) {
-      console.error("Error updating user role:", error);
+    if (updateError) {
+      console.error("Error updating user:", updateError);
       return NextResponse.json(
-        { error: "Failed to update user role", details: error.message },
+        { error: "Failed to update user" },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({
-      message: "User role updated successfully",
-      userId: userId,
-      role: role
-    });
+    return NextResponse.json({ message: "User role updated successfully" });
 
   } catch (err) {
     console.error("Unexpected error:", err);

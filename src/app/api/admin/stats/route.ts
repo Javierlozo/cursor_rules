@@ -11,6 +11,14 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  // Check if admin client is available
+  if (!supabaseAdmin) {
+    return NextResponse.json(
+      { error: "Admin service not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');
@@ -57,7 +65,7 @@ export async function GET(request: NextRequest) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    const activeUsers = users.filter(u => 
+    const activeUsers = users.filter((u: any) => 
       u.last_sign_in_at && new Date(u.last_sign_in_at) > thirtyDaysAgo
     ).length;
 

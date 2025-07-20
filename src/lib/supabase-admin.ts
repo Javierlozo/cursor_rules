@@ -9,17 +9,18 @@ if (!supabaseUrl) {
   throw new Error("NEXT_PUBLIC_SUPABASE_URL is required");
 }
 
-if (!supabaseServiceKey) {
-  console.error("SUPABASE_SERVICE_ROLE_KEY is missing");
-  // Don't throw error during build, just log it
-  if (process.env.NODE_ENV === 'production') {
-    console.warn("SUPABASE_SERVICE_ROLE_KEY not available in production");
-  }
+// Only create the client if we have the service key, otherwise return null
+let supabaseAdmin: any = null;
+
+if (supabaseServiceKey) {
+  supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false
+    }
+  });
+} else {
+  console.warn("SUPABASE_SERVICE_ROLE_KEY not available - admin functions will be disabled");
 }
 
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || '', {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-}); 
+export { supabaseAdmin }; 

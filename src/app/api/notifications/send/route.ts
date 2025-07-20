@@ -11,6 +11,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if admin client is available
+    if (!supabaseAdmin) {
+      return NextResponse.json(
+        { error: "Admin service not configured" },
+        { status: 503 }
+      );
+    }
+
     const body = await request.json();
     const { ruleName, ruleDescription, ruleId } = body;
 
@@ -35,7 +43,7 @@ export async function POST(request: NextRequest) {
     // Try to create notifications, but don't fail if table doesn't exist
     try {
       // Create notifications in the database for each user
-      const notificationPromises = users.map(async (user) => {
+      const notificationPromises = users.map(async (user: any) => {
         try {
           // Insert notification into database
           const { error } = await supabaseAdmin
