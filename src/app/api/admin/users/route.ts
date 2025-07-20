@@ -3,6 +3,14 @@ import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET(request: NextRequest) {
+  // Prevent execution during build time
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Service not available" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');
@@ -65,6 +73,14 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // Prevent execution during build time
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Service not available" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');
@@ -136,6 +152,14 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  // Prevent execution during build time
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Service not available" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');
@@ -204,6 +228,14 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  // Prevent execution during build time
+  if (process.env.NODE_ENV === 'production' && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: "Service not available" },
+      { status: 503 }
+    );
+  }
+
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization');

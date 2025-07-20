@@ -1,13 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { FiMail, FiLock, FiUser, FiCheck } from "react-icons/fi";
 
-export default function InvitePage() {
+interface PasswordRequirements {
+  length: boolean;
+  uppercase: boolean;
+  lowercase: boolean;
+  number: boolean;
+  special: boolean;
+}
+
+function InvitePageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signIn } = useAuth();
@@ -303,5 +311,20 @@ export default function InvitePage() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function InvitePage() {
+  return (
+    <Suspense fallback={
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </main>
+    }>
+      <InvitePageContent />
+    </Suspense>
   );
 } 
