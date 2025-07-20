@@ -85,6 +85,27 @@ function CreateRuleForm() {
       });
 
       if (res.ok) {
+        const ruleData = await res.json();
+        
+        // Send notifications to all users about the new rule
+        try {
+          await fetch("/api/notifications/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              ruleId: ruleData.id,
+              ruleName: formData.name,
+              ruleDescription: formData.description,
+            }),
+          });
+        } catch (notificationError) {
+          console.error("Failed to send notifications:", notificationError);
+          // Don't fail the rule creation if notifications fail
+        }
+        
         router.push("/cursor-rules");
       } else {
         const errorData = await res.json();

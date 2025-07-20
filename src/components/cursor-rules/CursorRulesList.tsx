@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiDownload } from "react-icons/fi";
-import { CursorRule } from "@/lib/types/cursor-rule";
+import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiDownload, FiUser } from "react-icons/fi";
+import { CursorRule, User } from "@/lib/types/cursor-rule";
 import { useState } from "react";
+
+interface CursorRuleWithCreator extends CursorRule {
+  creator?: User;
+}
 
 export default function CursorRulesList({
   rules = [],
 }: {
-  rules: CursorRule[];
+  rules: CursorRuleWithCreator[];
 }) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -79,6 +83,15 @@ export default function CursorRulesList({
                 <span>
                   Added {new Date(rule.created_at).toLocaleDateString()}
                 </span>
+                {rule.creator && (
+                  <>
+                    <span className="text-gray-500">•</span>
+                    <FiUser className="w-4 h-4" />
+                    <span>
+                      by {rule.creator.username || rule.creator.email}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
             <div className="flex gap-2">

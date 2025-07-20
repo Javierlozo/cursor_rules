@@ -17,7 +17,14 @@ export default function CursorRulesPage() {
       try {
         const { data } = await supabase
           .from("cursor_rules")
-          .select("*")
+          .select(`
+            *,
+            creator:created_by(
+              id,
+              email,
+              username
+            )
+          `)
           .not("created_by", "is", null) // Filter out orphaned rules
           .returns<CursorRule[]>();
 
