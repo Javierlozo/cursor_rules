@@ -12,6 +12,8 @@ import {
   FiGithub,
   FiMenu,
   FiX,
+  FiDownload,
+  FiFileText,
 } from "react-icons/fi";
 
 export default function Header() {
@@ -33,6 +35,16 @@ export default function Header() {
       href: "/cursor-rules/create",
       icon: <FiPlus className="w-5 h-5" />,
       label: "Create",
+    },
+    {
+      href: "/cursor-rules/templates",
+      icon: <FiFileText className="w-5 h-5" />,
+      label: "Templates",
+    },
+    {
+      href: "/about",
+      icon: <FiBook className="w-5 h-5" />,
+      label: "About",
     },
     {
       href: "https://docs.cursor.sh",
@@ -57,7 +69,7 @@ export default function Header() {
             href="/"
             className="text-xl font-bold flex items-center gap-2 text-white"
           >
-            <FiCommand className="w-6 h-6" />
+            <FiDownload className="w-6 h-6" />
             Cursor Rules
           </Link>
 
