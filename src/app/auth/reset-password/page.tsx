@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import ClientOnly from "@/components/ClientOnly";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -18,14 +19,45 @@ function ResetPasswordForm() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // Check if we have the necessary tokens in the URL
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
+    // Check if we have tokens in the URL hash fragment (Supabase email links use #)
+    const hash = window.location.hash.substring(1); // Remove the # symbol
+    const urlParams = new URLSearchParams(hash);
     
-    if (!accessToken || !refreshToken) {
-      setError("Invalid reset link. Please request a new password reset.");
+    const accessToken = urlParams.get('access_token');
+    const refreshToken = urlParams.get('refresh_token');
+    const token = urlParams.get('token');
+    const type = urlParams.get('type');
+    
+    console.log('Reset password URL params:', { 
+      accessToken: !!accessToken, 
+      refreshToken: !!refreshToken,
+      token: !!token,
+      type,
+      hash: window.location.hash,
+      allParams: Object.fromEntries(urlParams.entries())
+    });
+    
+    if (!accessToken && !token) {
+      setError("This page is for password reset links only. Please check your email for the reset link or request a new password reset.");
+    } else if (token) {
+      // Handle the token parameter (older Supabase format)
+      supabase.auth.verifyOtp({
+        token_hash: token,
+        type: 'recovery'
+      }).then(({ data, error }) => {
+        if (error) {
+          console.error('Token verification error:', error);
+          setError("Invalid or expired reset link. Please request a new password reset.");
+        }
+      });
+    } else if (accessToken && refreshToken) {
+      // Set the session with the tokens
+      supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
     }
-  }, [searchParams]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +84,7 @@ function ResetPasswordForm() {
       });
 
       if (error) {
+        console.error('Password update error:', error);
         setError(error.message);
       } else {
         setMessage("Password updated successfully! Redirecting to sign in...");
@@ -59,7 +92,8 @@ function ResetPasswordForm() {
           router.push('/auth/signin');
         }, 2000);
       }
-    } catch {
+    } catch (err) {
+      console.error('Unexpected error:', err);
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -77,7 +111,13 @@ function ResetPasswordForm() {
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-900/20 border border-red-700/30 rounded-lg">
-              <p className="text-red-300">{error}</p>
+              <p className="text-red-300 mb-3">{error}</p>
+              <Link 
+                href="/auth/forgot-password" 
+                className="text-blue-400 hover:text-blue-300 transition text-sm"
+              >
+                ← Request new password reset
+              </Link>
             </div>
           )}
 
@@ -87,7 +127,9 @@ function ResetPasswordForm() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {!error && (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="password" className="block text-sm font-medium mb-2">
                 New Password
@@ -155,6 +197,8 @@ function ResetPasswordForm() {
               Back to Sign In
             </Link>
           </div>
+            </>
+          )}
         </div>
       </div>
     </main>
@@ -173,7 +217,20 @@ export default function ResetPasswordPage() {
         </div>
       </main>
     }>
-      <ResetPasswordForm />
+      <ClientOnly
+        fallback={
+          <main className="container mx-auto px-4 py-8">
+            <div className="max-w-md mx-auto">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-4 text-gray-400">Loading...</p>
+              </div>
+            </div>
+          </main>
+        }
+      >
+        <ResetPasswordForm />
+      </ClientOnly>
     </Suspense>
   );
 } 

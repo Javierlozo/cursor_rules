@@ -25,7 +25,7 @@ export default function SignInPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/cursor-rules/create");
+        router.push("/");
       }
     } catch {
       setError("An unexpected error occurred");
