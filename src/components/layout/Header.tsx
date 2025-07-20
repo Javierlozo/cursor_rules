@@ -192,6 +192,15 @@ export default function Header() {
                           <span>Create Rule</span>
                         </Link>
                         
+                        <Link
+                          href="/profile"
+                          className="flex items-center gap-3 w-full px-3 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-md transition group"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                        >
+                          <FiSettings className="w-4 h-4 group-hover:text-blue-400" />
+                          <span>Profile Settings</span>
+                        </Link>
+                        
                         {isAdmin && (
                           <>
                             <div className="border-t border-gray-700 my-2"></div>
@@ -330,6 +339,15 @@ export default function Header() {
                       >
                         <FiPlus className="w-4 h-4" />
                         <span>Create Rule</span>
+                      </Link>
+                      
+                      <Link
+                        href="/profile"
+                        className="flex items-center gap-3 text-gray-300 hover:text-blue-400 transition px-2 py-3 rounded-md hover:bg-gray-800/50"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <FiSettings className="w-4 h-4" />
+                        <span>Profile Settings</span>
                       </Link>
                       
                       {isAdmin && (

@@ -104,11 +104,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Invite user using admin client
+    // Invite user using admin client with custom redirect URL
     const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
       data: {
         role: role
-      }
+      },
+      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/invite`
     });
 
     if (error) {
