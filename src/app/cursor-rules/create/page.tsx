@@ -1,208 +1,94 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CreateRuleData } from "@/lib/types/cursor-rule";
-import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { CreateRuleData } from "@/lib/types/cursor-rule";
+import { FiSave, FiX, FiPlus, FiTrash2 } from "react-icons/fi";
 
-const CATEGORIES = [
-  "React", "Node.js", "TypeScript", "Testing", "UI/UX", 
-  "Performance", "Security", "Database", "API", "General"
-];
-
-const FRAMEWORKS = [
-  "React", "Vue", "Angular", "Next.js", "Nuxt", "Svelte",
-  "Express", "Fastify", "Koa", "NestJS", "Django", "Flask",
-  "Laravel", "Ruby on Rails", "Spring", "ASP.NET"
-];
-
-function CreateRuleForm() {
+export default function CreateRulePage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const { user, loading } = useAuth();
-  
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<CreateRuleData>({
     name: "",
     description: "",
     pattern: "",
     rule_content: "",
-    references: [],
     tags: [],
     category: "",
     framework: "",
+    file_references: [],
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
-
-  // Load template data from URL parameters
-  useEffect(() => {
-    const name = searchParams.get('name');
-    const description = searchParams.get('description');
-    const pattern = searchParams.get('pattern');
-    const category = searchParams.get('category');
-    const framework = searchParams.get('framework');
-    const tags = searchParams.get('tags');
-    const content = searchParams.get('content');
-
-    if (name || description || pattern || category || framework || tags || content) {
-      setFormData({
-        name: name || "",
-        description: description || "",
-        pattern: pattern || "",
-        rule_content: content || "",
-        references: [],
-        tags: tags ? tags.split(',') : [],
-        category: category || "",
-        framework: framework || "",
-      });
-    }
-  }, [searchParams]);
+  const [newTag, setNewTag] = useState("");
+  const [newReference, setNewReference] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
 
     try {
-      // Get the current session token
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.access_token) {
-        setError("You must be logged in to create rules");
-        setIsSubmitting(false);
+      const { data, error } = await supabase
+        .from("cursor_rules")
+        .insert([formData])
+        .select()
+        .single();
+
+      if (error) {
+        console.error("Error creating rule:", error);
+        alert("Failed to create rule");
         return;
       }
 
-      const res = await fetch("/api/cursor-rules", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        const ruleData = await res.json();
-        
-        // Send notifications to all users about the new rule
-        try {
-          await fetch("/api/notifications/send", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.access_token}`,
-            },
-            body: JSON.stringify({
-              ruleId: ruleData.id,
-              ruleName: formData.name,
-              ruleDescription: formData.description,
-            }),
-          });
-        } catch (notificationError) {
-          console.error("Failed to send notifications:", notificationError);
-          // Don't fail the rule creation if notifications fail
-        }
-        
-        router.push("/cursor-rules");
-      } else {
-        const errorData = await res.json();
-        setError(errorData.error || "Failed to create rule");
-      }
-    } catch {
-      setError("Network error. Please try again.");
+      console.log("Rule created successfully:", data.name);
+      router.push("/cursor-rules");
+    } catch (error) {
+      console.error("Error creating rule:", error);
+      alert("Failed to create rule");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const addTag = (tag: string) => {
-    if (tag.trim() && !formData.tags?.includes(tag.trim())) {
+  const addTag = () => {
+    if (newTag.trim() && !formData.tags?.includes(newTag.trim())) {
       setFormData({
         ...formData,
-        tags: [...(formData.tags || []), tag.trim()],
+        tags: [...(formData.tags || []), newTag.trim()],
       });
+      setNewTag("");
     }
   };
 
   const removeTag = (tagToRemove: string) => {
     setFormData({
       ...formData,
-      tags: (formData.tags || []).filter(tag => tag !== tagToRemove),
+      tags: formData.tags?.filter((tag) => tag !== tagToRemove) || [],
     });
   };
 
-  // Show loading state
-  if (loading) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading...</p>
-        </div>
-      </main>
-    );
-  }
+  const addReference = () => {
+    if (newReference.trim() && !formData.file_references?.includes(newReference.trim())) {
+      setFormData({
+        ...formData,
+        file_references: [...(formData.file_references || []), newReference.trim()],
+      });
+      setNewReference("");
+    }
+  };
 
-  // Show login required message
-  if (!user) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-            <p className="text-gray-400 mb-6">
-              You need to be logged in to create and share cursor rules with the community.
-            </p>
-          </div>
-          
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
-            <h2 className="text-xl font-semibold mb-4">Join the Community</h2>
-            <p className="text-gray-400 mb-6">
-              Create an account to start sharing your cursor rules and help other developers.
-            </p>
-            
-            <div className="flex gap-4 justify-center">
-              <button
-                onClick={() => router.push('/auth/signin')}
-                className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
-              >
-                Sign In
-              </button>
-              <button
-                onClick={() => router.push('/auth/signup')}
-                className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
-              >
-                Sign Up
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
-    );
-  }
+  const removeReference = (refToRemove: string) => {
+    setFormData({
+      ...formData,
+      file_references: formData.file_references?.filter((ref) => ref !== refToRemove) || [],
+    });
+  };
 
   return (
-    <main className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Create Cursor Rule</h1>
-          <a
-            href="/cursor-rules/templates"
-            className="text-blue-500 hover:text-blue-600 transition"
-          >
-            Browse Templates →
-          </a>
-        </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">{error}</p>
-          </div>
-        )}
-
+        <h1 className="text-3xl font-bold mb-8">Create New Cursor Rule</h1>
+        
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
           <div className="grid gap-6 md:grid-cols-2">
@@ -215,8 +101,8 @@ function CreateRuleForm() {
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-                placeholder="e.g., React Component Best Practices"
+                className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Enter rule name"
                 required
               />
             </div>
@@ -230,7 +116,7 @@ function CreateRuleForm() {
                 id="pattern"
                 value={formData.pattern}
                 onChange={(e) => setFormData({ ...formData, pattern: e.target.value })}
-                className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., *.tsx, src/**/*.js"
               />
             </div>
@@ -249,9 +135,16 @@ function CreateRuleForm() {
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select a category</option>
-                {CATEGORIES.map(category => (
-                  <option key={category} value={category}>{category}</option>
-                ))}
+                <option value="React">React</option>
+                <option value="Node.js">Node.js</option>
+                <option value="TypeScript">TypeScript</option>
+                <option value="Testing">Testing</option>
+                <option value="UI/UX">UI/UX</option>
+                <option value="Performance">Performance</option>
+                <option value="Security">Security</option>
+                <option value="Database">Database</option>
+                <option value="API">API</option>
+                <option value="General">General</option>
               </select>
             </div>
 
@@ -266,9 +159,22 @@ function CreateRuleForm() {
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select a framework</option>
-                {FRAMEWORKS.map(framework => (
-                  <option key={framework} value={framework}>{framework}</option>
-                ))}
+                <option value="React">React</option>
+                <option value="Vue">Vue</option>
+                <option value="Angular">Angular</option>
+                <option value="Next.js">Next.js</option>
+                <option value="Nuxt">Nuxt</option>
+                <option value="Svelte">Svelte</option>
+                <option value="Express">Express</option>
+                <option value="Fastify">Fastify</option>
+                <option value="Koa">Koa</option>
+                <option value="NestJS">NestJS</option>
+                <option value="Django">Django</option>
+                <option value="Flask">Flask</option>
+                <option value="Laravel">Laravel</option>
+                <option value="Ruby on Rails">Ruby on Rails</option>
+                <option value="Spring">Spring</option>
+                <option value="ASP.NET">ASP.NET</option>
               </select>
             </div>
           </div>
@@ -282,7 +188,7 @@ function CreateRuleForm() {
               id="description"
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+              className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={3}
               placeholder="Describe when and how this rule should be applied..."
             />
@@ -294,7 +200,7 @@ function CreateRuleForm() {
               Tags
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
-              {(formData.tags || []).map((tag, index) => (
+              {formData.tags?.map((tag, index) => (
                 <span
                   key={index}
                   className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
@@ -305,23 +211,79 @@ function CreateRuleForm() {
                     onClick={() => removeTag(tag)}
                     className="ml-1 text-blue-600 hover:text-blue-800"
                   >
-                    ×
+                    <FiX size={14} />
                   </button>
                 </span>
               ))}
             </div>
-            <input
-              type="text"
-              placeholder="Add a tag and press Enter"
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  addTag(e.currentTarget.value);
-                  e.currentTarget.value = '';
-                }
-              }}
-              className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                  }
+                }}
+                className="flex-1 p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Add a tag and press Enter"
+              />
+              <button
+                type="button"
+                onClick={addTag}
+                className="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              >
+                <FiPlus size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* File References */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              File References
+            </label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.file_references?.map((ref, index) => (
+                <span
+                  key={index}
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                >
+                  {ref}
+                  <button
+                    type="button"
+                    onClick={() => removeReference(ref)}
+                    className="ml-1 text-green-600 hover:text-green-800"
+                  >
+                    <FiX size={14} />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newReference}
+                onChange={(e) => setNewReference(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addReference();
+                  }
+                }}
+                className="flex-1 p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Add a file reference and press Enter"
+              />
+              <button
+                type="button"
+                onClick={addReference}
+                className="px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+              >
+                <FiPlus size={16} />
+              </button>
+            </div>
           </div>
 
           {/* Rule Content */}
@@ -333,7 +295,7 @@ function CreateRuleForm() {
               id="rule_content"
               value={formData.rule_content}
               onChange={(e) => setFormData({ ...formData, rule_content: e.target.value })}
-              className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm placeholder-gray-400"
+              className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-mono text-sm"
               rows={15}
               placeholder="Enter your rule content here..."
               required
@@ -348,35 +310,22 @@ function CreateRuleForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
+              <FiSave size={16} />
               {isSubmitting ? "Creating..." : "Create Rule"}
             </button>
             <button
               type="button"
               onClick={() => router.back()}
-              className="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-200 transition"
+              className="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-200 transition flex items-center gap-2"
             >
+              <FiX size={16} />
               Cancel
             </button>
           </div>
         </form>
       </div>
-    </main>
-  );
-}
-
-export default function CreateRulePage() {
-  return (
-    <Suspense fallback={
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading...</p>
-        </div>
-      </main>
-    }>
-      <CreateRuleForm />
-    </Suspense>
+    </div>
   );
 }

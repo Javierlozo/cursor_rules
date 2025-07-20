@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
       description: body.description?.trim() || null,
       pattern: body.pattern?.trim() || null,
       rule_content: body.rule_content.trim(),
-      file_references: body.references || [],
+      file_references: body.file_references || [],
       tags: body.tags || [],
       category: body.category || null,
       framework: body.framework || null,

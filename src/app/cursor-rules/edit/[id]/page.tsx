@@ -28,10 +28,10 @@ export default function EditRulePage() {
     description: "",
     pattern: "",
     rule_content: "",
-    references: [],
     tags: [],
     category: "",
     framework: "",
+    file_references: [],
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -59,10 +59,10 @@ export default function EditRulePage() {
           description: data.description || "",
           pattern: data.pattern || "",
           rule_content: data.rule_content,
-          references: data.file_references || [],
           tags: data.tags || [],
           category: data.category || "",
           framework: data.framework || "",
+          file_references: data.file_references || [],
         });
       }
     } catch {
