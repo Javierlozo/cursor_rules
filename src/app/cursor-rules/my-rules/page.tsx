@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -15,18 +15,7 @@ export default function MyRulesPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    if (user) {
-      fetchMyRules();
-    }
-  }, [user, loading]);
-
-  const fetchMyRules = async () => {
+  const fetchMyRules = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("cursor_rules")
@@ -39,12 +28,23 @@ export default function MyRulesPage() {
       } else {
         setRules(data || []);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
+      console.error("Error fetching rules");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    if (user) {
+      fetchMyRules();
+    }
+  }, [user, loading, fetchMyRules, router]);
 
   const copyRuleContent = async (id: string, content: string) => {
     try {
@@ -154,7 +154,7 @@ export default function MyRulesPage() {
             <div className="text-4xl mb-4">📝</div>
             <h3 className="text-xl font-semibold mb-2">No Rules Yet</h3>
             <p className="text-gray-400 mb-6">
-              You haven't created any rules yet. Start contributing to the community!
+              You haven&apos;t created any rules yet. Start contributing to the community!
             </p>
             <button
               onClick={() => router.push('/cursor-rules/create')}
@@ -249,7 +249,7 @@ export default function MyRulesPage() {
                     <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 max-w-md mx-4">
                       <h3 className="text-xl font-semibold mb-4">Delete Rule</h3>
                       <p className="text-gray-400 mb-6">
-                        Are you sure you want to delete "{rule.name}"? This action cannot be undone.
+                        Are you sure you want to delete &quot;{rule.name}&quot;? This action cannot be undone.
                       </p>
                       <div className="flex gap-3">
                         <button

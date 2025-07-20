@@ -7,7 +7,7 @@ interface Stats {
   totalDownloads: number;
   uniqueContributors: number;
   topCategories: Array<{ name: string; count: number }>;
-  recentRules: Array<any>;
+  recentRules: Array<{ id: string; name: string; description: string; category: string }>;
 }
 
 export default function HomePage() {
@@ -113,7 +113,7 @@ export default function HomePage() {
             <div className="text-3xl mb-4">⚡</div>
             <h3 className="font-semibold mb-2">Boost Productivity</h3>
             <p className="text-gray-400 text-sm">
-              Generate code that matches your team's patterns instantly. No more rewriting AI suggestions.
+              Generate code that matches your team&apos;s patterns instantly. No more rewriting AI suggestions.
             </p>
           </div>
           <div className="text-center p-6 border border-gray-700 bg-gray-800 rounded-lg">
@@ -134,7 +134,7 @@ export default function HomePage() {
             <div className="text-3xl mb-4">🚀</div>
             <h3 className="font-semibold mb-2">Faster Onboarding</h3>
             <p className="text-gray-400 text-sm">
-              New team members can instantly adopt your project's conventions and coding standards.
+              New team members can instantly adopt your project&apos;s conventions and coding standards.
             </p>
           </div>
         </div>

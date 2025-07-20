@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
 import { useAuth } from "@/contexts/AuthContext";
@@ -17,7 +17,7 @@ const FRAMEWORKS = [
   "Laravel", "Ruby on Rails", "Spring", "ASP.NET"
 ];
 
-export default function CreateRulePage() {
+function CreateRuleForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading } = useAuth();
@@ -90,7 +90,7 @@ export default function CreateRulePage() {
         const errorData = await res.json();
         setError(errorData.error || "Failed to create rule");
       }
-    } catch (error) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -342,5 +342,20 @@ export default function CreateRulePage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function CreateRulePage() {
+  return (
+    <Suspense fallback={
+      <main className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </main>
+    }>
+      <CreateRuleForm />
+    </Suspense>
   );
 }

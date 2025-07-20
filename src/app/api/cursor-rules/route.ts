@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { CreateRuleData, SearchFilters } from "@/lib/types/cursor-rule";
+import { CreateRuleData } from "@/lib/types/cursor-rule";
 
 export async function GET(request: NextRequest) {
   try {

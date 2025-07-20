@@ -29,7 +29,7 @@ export default function SignUpPage() {
         alert("Account created successfully! Please check your email to verify your account.");
         router.push("/auth/signin");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);

@@ -26,7 +26,7 @@ export default function SignInPage() {
       } else {
         router.push("/cursor-rules/create");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export default function SignInPage() {
 
           <div className="mt-6 text-center">
             <p className="text-gray-400">
-              Don't have an account?{" "}
+              Don&apos;t have an account?{" "}
               <Link href="/auth/signup" className="text-blue-400 hover:text-blue-300">
                 Sign up
               </Link>

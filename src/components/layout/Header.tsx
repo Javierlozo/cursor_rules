@@ -8,7 +8,6 @@ import {
   FiHome,
   FiPlus,
   FiList,
-  FiCommand,
   FiBook,
   FiGithub,
   FiMenu,

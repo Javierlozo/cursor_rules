@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -38,18 +38,7 @@ export default function EditRulePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    if (user && ruleId) {
-      fetchRule();
-    }
-  }, [user, loading, ruleId]);
-
-  const fetchRule = async () => {
+  const fetchRule = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("cursor_rules")
@@ -76,13 +65,24 @@ export default function EditRulePage() {
           framework: data.framework || "",
         });
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch {
+      console.error("Error loading rule");
       setError("Failed to load rule");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [ruleId, user?.id]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    if (user && ruleId) {
+      fetchRule();
+    }
+  }, [user, loading, ruleId, fetchRule, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +114,7 @@ export default function EditRulePage() {
         const errorData = await res.json();
         setError(errorData.error || "Failed to update rule");
       }
-    } catch (error) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsSubmitting(false);
