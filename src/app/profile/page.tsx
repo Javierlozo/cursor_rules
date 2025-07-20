@@ -91,8 +91,17 @@ export default function ProfilePage() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError("Password must be at least 6 characters");
+    // Validate password requirements
+    const passwordRequirements = {
+      length: newPassword.length >= 8,
+      uppercase: /[A-Z]/.test(newPassword),
+      lowercase: /[a-z]/.test(newPassword),
+      number: /\d/.test(newPassword),
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(newPassword),
+    };
+
+    if (!Object.values(passwordRequirements).every(Boolean)) {
+      setError("Password must meet all security requirements");
       setUpdatingPassword(false);
       return;
     }
@@ -322,7 +331,7 @@ export default function ProfilePage() {
                   required
                   minLength={6}
                 />
-                <p className="text-sm text-gray-400 mt-1">Password must be at least 6 characters</p>
+                <p className="text-sm text-gray-400 mt-1">Password must be at least 8 characters with uppercase, lowercase, number, and special character</p>
               </div>
 
               <div>
