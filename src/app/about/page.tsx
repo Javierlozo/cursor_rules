@@ -4,9 +4,10 @@ export default function AboutPage() {
       <div className="max-w-4xl mx-auto">
         {/* Hero Section */}
         <section className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6">About Cursor Rules</h1>
+          <h1 className="text-5xl font-bold mb-6">About Cursor Rules Hub</h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Discover how AI behavior instructions can transform your coding workflow and help build better software together.
+            An independent community platform for sharing and discovering Cursor rules. 
+            Built by developers, for developers - not affiliated with Cursor but passionate about helping the community.
           </p>
         </section>
         
@@ -244,6 +245,125 @@ export default function AboutPage() {
               <p className="text-gray-700">
                 Contribute to a growing library of proven patterns and coding standards that benefit everyone.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Developer Showcase */}
+        <section id="developer" className="mb-16">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Built with expertise by Luis Lozoya</h2>
+                          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+                Senior Full Stack Engineer with extensive experience in building secure, high-performance web applications for businesses of all sizes
+              </p>
+          </div>
+          
+          <div className="grid gap-8 md:grid-cols-2 items-center">
+            <div className="space-y-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">👨‍💻</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-blue-300">Senior Full Stack Engineer</h3>
+                  <p className="text-gray-400">Building secure, high-performance web applications for businesses</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🚀</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-green-300">Modern Technologies</h3>
+                  <p className="text-gray-400">React, Angular, Next.js, AWS, and cloud-native solutions</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🎨</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-purple-300">Security & DevOps</h3>
+                  <p className="text-gray-400">Cybersecurity, cloud security, and infrastructure expertise</p>
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div className="flex items-center space-x-4 pt-4">
+                <a href="https://github.com/Javierlozo" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/luisjlozoya/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                  </svg>
+                </a>
+                <a href="https://www.luislozoya.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </a>
+                <a href="mailto:luis.lozoya.tech@gmail.com" className="text-gray-400 hover:text-white transition">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.272H1.636A1.636 1.636 0 0 1 0 18.366V5.457c0-.904.732-1.636 1.636-1.636h20.728c.904 0 1.636.732 1.636 1.636zM12 13.273L1.636 5.457h20.728L12 13.273z"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-xl border border-gray-700">
+              <h3 className="text-xl font-semibold mb-4 text-blue-300">About Me</h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                I'm a Senior Full Stack Engineer with extensive experience in building secure, high-performance web applications for businesses of all sizes. 
+                Leveraging modern frameworks like React, Next.js, and AWS, I focus on creating user-friendly solutions that help companies thrive in today's digital landscape.
+              </p>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                With a passion for full-stack development, I strive to implement impactful, transformative technologies and best practices that drive real-world results.
+              </p>
+              
+              <h4 className="text-lg font-semibold mb-3 text-green-300">Tech Stack</h4>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">React</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">Angular</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">Next.js</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">AWS</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">TypeScript</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                  <span className="text-sm text-gray-300">Supabase</span>
+                </div>
+              </div>
+              
+                            <div className="border-t border-gray-700 pt-6">
+                <h4 className="text-sm font-semibold mb-3 text-gray-400">This Project</h4>
+                <ul className="text-sm text-gray-400 space-y-1">
+                  <li>• Community-driven platform</li>
+                  <li>• Real-time notifications</li>
+                  <li>• User authentication & profiles</li>
+                  <li>• Social features (follows, likes)</li>
+                  <li>• Admin dashboard</li>
+                  <li>• Modern UI/UX design</li>
+                </ul>
+              </div>
             </div>
           </div>
         </section>

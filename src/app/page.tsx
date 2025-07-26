@@ -61,7 +61,8 @@ export default function HomePage() {
         <section className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-6">Cursor Rules Hub</h1>
           <p className="text-xl text-gray-400 mb-10 max-w-3xl mx-auto">
-            Discover, create, and share system-level instructions for controlling how the Cursor Agent model behaves
+            An independent community platform for sharing and discovering Cursor rules. 
+            Built by developers, for developers.
           </p>
           <div className="flex gap-4 justify-center">
             <Link
