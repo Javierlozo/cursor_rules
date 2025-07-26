@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
-import { FiSave, FiX, FiPlus, FiTrash2, FiAlertCircle, FiCheck } from "react-icons/fi";
+import { FiSave, FiX, FiPlus, FiTrash2, FiAlertCircle, FiCheck, FiUser, FiDownload, FiStar } from "react-icons/fi";
+import Link from "next/link";
 
 function CreateRuleForm() {
   const router = useRouter();
@@ -429,9 +430,68 @@ export default function CreateRulePage() {
     );
   }
 
-  // Don't render the form if user is not authenticated
+  // Show authentication required message if user is not authenticated
   if (!user) {
-    return null; // Will redirect via useEffect in CreateRuleForm
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FiUser className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold mb-2">Authentication Required</h1>
+                <p className="text-gray-400 mb-6">
+                  You need to be logged in to create Cursor Rules. Sign in to start creating your own rules and contributing to the community.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <Link
+                  href="/auth/signin?redirect=/cursor-rules/create"
+                  className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2"
+                >
+                  <FiUser className="w-4 h-4" />
+                  Sign In to Create Rules
+                </Link>
+                
+                <div className="text-sm text-gray-400">
+                  Don't have an account?{" "}
+                  <Link href="/auth/signup?redirect=/cursor-rules/create" className="text-blue-400 hover:text-blue-300">
+                    Sign up here
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-gray-700">
+                <h3 className="text-lg font-semibold mb-3">Why Create Rules?</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-400">
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiPlus className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Share your expertise</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiDownload className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Help other developers</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiStar className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Build your reputation</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

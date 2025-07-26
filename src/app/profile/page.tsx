@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { FiUser, FiMail, FiLock, FiShield, FiCalendar, FiSave, FiEdit3 } from "react-icons/fi";
+import Link from "next/link";
 
 interface UserProfile {
   id: string;
@@ -61,9 +62,68 @@ export default function ProfilePage() {
     );
   }
 
-  // Don't render the page if user is not authenticated
+  // Show authentication required message if user is not authenticated
   if (!user) {
-    return null; // Will redirect via useEffect
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-center">
+            <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
+              <div className="mb-6">
+                <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FiUser className="w-8 h-8 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold mb-2">Authentication Required</h1>
+                <p className="text-gray-400 mb-6">
+                  You need to be logged in to view your profile. Sign in to manage your account settings and preferences.
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <Link
+                  href="/auth/signin?redirect=/profile"
+                  className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition flex items-center justify-center gap-2"
+                >
+                  <FiUser className="w-4 h-4" />
+                  Sign In to View Profile
+                </Link>
+                
+                <div className="text-sm text-gray-400">
+                  Don't have an account?{" "}
+                  <Link href="/auth/signup?redirect=/profile" className="text-blue-400 hover:text-blue-300">
+                    Sign up here
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="mt-8 pt-6 border-t border-gray-700">
+                <h3 className="text-lg font-semibold mb-3">Profile Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-400">
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiUser className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Manage account</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiLock className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Update password</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <FiShield className="w-4 h-4 text-white" />
+                    </div>
+                    <p>Security settings</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
   }
 
   const fetchProfile = async () => {
