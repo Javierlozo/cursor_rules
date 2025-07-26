@@ -55,7 +55,6 @@ export default function Header() {
   };
 
   const navLinks = [
-    { href: "/", icon: <FiHome className="w-5 h-5" />, label: "Home" },
     {
       href: "/cursor-rules",
       icon: <FiList className="w-5 h-5" />,
@@ -269,6 +268,7 @@ export default function Header() {
         {isMobileMenuOpen && (
           <div className="md:hidden border-t border-gray-800 py-4 bg-gray-900">
             <div className="flex flex-col space-y-4">
+              {/* Mobile Navigation Links */}
               {navLinks.map((link) =>
                 link.external ? (
                   <a
@@ -297,8 +297,8 @@ export default function Header() {
                 )
               )}
               
-              {/* Mobile User Section */}
-              {user && (
+              {/* Mobile Auth Section */}
+              {user ? (
                 <>
                   <div className="border-t border-gray-700 pt-4 mt-4">
                     {/* Mobile User Info */}
@@ -376,6 +376,30 @@ export default function Header() {
                         <FiLogOut className="w-4 h-4" />
                         <span>Sign Out</span>
                       </button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="border-t border-gray-700 pt-4 mt-4">
+                    <div className="px-2 space-y-3">
+                      <Link
+                        href="/auth/signin"
+                        className="flex items-center gap-3 text-gray-300 hover:text-blue-400 transition px-2 py-3 rounded-md hover:bg-gray-800/50"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <FiUser className="w-4 h-4" />
+                        <span>Sign In</span>
+                      </Link>
+                      
+                      <Link
+                        href="/auth/signup"
+                        className="flex items-center gap-3 bg-blue-500 text-white px-2 py-3 rounded-md hover:bg-blue-600 transition"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <FiUser className="w-4 h-4" />
+                        <span>Sign Up</span>
+                      </Link>
                     </div>
                   </div>
                 </>

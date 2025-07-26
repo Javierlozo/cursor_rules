@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import ClientOnly from "@/components/ClientOnly";
+import { useSearchParams } from "next/navigation";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +27,9 @@ export default function SignInPage() {
       if (error) {
         setError(error.message);
       } else {
-        router.push("/");
+        // Redirect to the intended destination or home
+        const redirectTo = searchParams.get('redirect') || "/";
+        router.push(redirectTo);
       }
     } catch {
       setError("An unexpected error occurred");

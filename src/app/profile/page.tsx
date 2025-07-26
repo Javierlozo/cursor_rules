@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { FiUser, FiMail, FiLock, FiShield, FiCalendar, FiSave, FiEdit3 } from "react-icons/fi";
@@ -15,6 +16,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { user, loading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
@@ -32,11 +34,37 @@ export default function ProfilePage() {
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
 
+  // Check authentication and redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin?redirect=/profile');
+    }
+  }, [user, loading, router]);
+
   useEffect(() => {
     if (user) {
       fetchProfile();
     }
   }, [user]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-400">Loading...</p>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  // Don't render the page if user is not authenticated
+  if (!user) {
+    return null; // Will redirect via useEffect
+  }
 
   const fetchProfile = async () => {
     try {
@@ -153,30 +181,6 @@ export default function ProfilePage() {
       setUpdatingProfile(false);
     }
   };
-
-  if (loading) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading...</p>
-        </div>
-      </main>
-    );
-  }
-
-  if (!user) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-4">Authentication Required</h1>
-          <p className="text-gray-400 mb-6">
-            You need to be logged in to view your profile.
-          </p>
-        </div>
-      </main>
-    );
-  }
 
   return (
     <main className="container mx-auto px-4 py-8">

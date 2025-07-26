@@ -3,12 +3,14 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
 import { FiSave, FiX, FiPlus, FiTrash2, FiAlertCircle, FiCheck } from "react-icons/fi";
 
 function CreateRuleForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -26,6 +28,13 @@ function CreateRuleForm() {
 
   const [newTag, setNewTag] = useState("");
   const [newReference, setNewReference] = useState("");
+
+  // Check authentication and redirect if not logged in
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth/signin?redirect=/cursor-rules/create');
+    }
+  }, [user, loading, router]);
 
   // Load template data from URL parameters
   useEffect(() => {
@@ -404,6 +413,27 @@ function CreateRuleForm() {
 }
 
 export default function CreateRulePage() {
+  const { user, loading } = useAuth();
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-400">Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render the form if user is not authenticated
+  if (!user) {
+    return null; // Will redirect via useEffect in CreateRuleForm
+  }
+
   return (
     <Suspense fallback={
       <div className="container mx-auto px-4 py-8">
