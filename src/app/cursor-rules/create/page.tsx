@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
-import { FiSave, FiX, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiSave, FiX, FiPlus, FiTrash2, FiAlertCircle, FiCheck } from "react-icons/fi";
 
-export default function CreateRulePage() {
+function CreateRuleForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  
   const [formData, setFormData] = useState<CreateRuleData>({
     name: "",
     description: "",
@@ -23,11 +27,46 @@ export default function CreateRulePage() {
   const [newTag, setNewTag] = useState("");
   const [newReference, setNewReference] = useState("");
 
+  // Load template data from URL parameters
+  useEffect(() => {
+    const name = searchParams.get('name');
+    const description = searchParams.get('description');
+    const pattern = searchParams.get('pattern');
+    const category = searchParams.get('category');
+    const framework = searchParams.get('framework');
+    const tags = searchParams.get('tags');
+    const content = searchParams.get('content');
+
+    if (name || description || pattern || category || framework || tags || content) {
+      setFormData({
+        name: name || "",
+        description: description || "",
+        pattern: pattern || "",
+        rule_content: content || "",
+        tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+        category: category || "",
+        framework: framework || "",
+        file_references: [],
+      });
+    }
+  }, [searchParams]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setError(null);
+    setSuccess(false);
 
     try {
+      // Get current session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        setError("You must be logged in to create rules");
+        setIsSubmitting(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("cursor_rules")
         .insert([formData])
@@ -36,15 +75,20 @@ export default function CreateRulePage() {
 
       if (error) {
         console.error("Error creating rule:", error);
-        alert("Failed to create rule");
+        setError(error.message || "Failed to create rule");
         return;
       }
 
+      setSuccess(true);
       console.log("Rule created successfully:", data.name);
-      router.push("/cursor-rules");
+      
+      // Redirect after a short delay to show success message
+      setTimeout(() => {
+        router.push("/cursor-rules");
+      }, 1500);
     } catch (error) {
       console.error("Error creating rule:", error);
-      alert("Failed to create rule");
+      setError("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -89,6 +133,22 @@ export default function CreateRulePage() {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Create New Cursor Rule</h1>
         
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-900/20 border border-red-700/30 rounded-lg flex items-center gap-2">
+            <FiAlertCircle className="text-red-400" />
+            <p className="text-red-300">{error}</p>
+          </div>
+        )}
+
+        {/* Success Message */}
+        {success && (
+          <div className="mb-6 p-4 bg-green-900/20 border border-green-700/30 rounded-lg flex items-center gap-2">
+            <FiCheck className="text-green-400" />
+            <p className="text-green-300">Rule created successfully! Redirecting...</p>
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Basic Information */}
           <div className="grid gap-6 md:grid-cols-2">
@@ -104,6 +164,7 @@ export default function CreateRulePage() {
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter rule name"
                 required
+                disabled={isSubmitting}
               />
             </div>
 
@@ -118,6 +179,7 @@ export default function CreateRulePage() {
                 onChange={(e) => setFormData({ ...formData, pattern: e.target.value })}
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="e.g., *.tsx, src/**/*.js"
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -133,6 +195,7 @@ export default function CreateRulePage() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={isSubmitting}
               >
                 <option value="">Select a category</option>
                 <option value="React">React</option>
@@ -157,6 +220,7 @@ export default function CreateRulePage() {
                 value={formData.framework}
                 onChange={(e) => setFormData({ ...formData, framework: e.target.value })}
                 className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                disabled={isSubmitting}
               >
                 <option value="">Select a framework</option>
                 <option value="React">React</option>
@@ -191,6 +255,7 @@ export default function CreateRulePage() {
               className="w-full p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows={3}
               placeholder="Describe when and how this rule should be applied..."
+              disabled={isSubmitting}
             />
           </div>
 
@@ -210,6 +275,7 @@ export default function CreateRulePage() {
                     type="button"
                     onClick={() => removeTag(tag)}
                     className="ml-1 text-blue-600 hover:text-blue-800"
+                    disabled={isSubmitting}
                   >
                     <FiX size={14} />
                   </button>
@@ -229,11 +295,13 @@ export default function CreateRulePage() {
                 }}
                 className="flex-1 p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Add a tag and press Enter"
+                disabled={isSubmitting}
               />
               <button
                 type="button"
                 onClick={addTag}
-                className="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                className="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:opacity-50"
+                disabled={isSubmitting}
               >
                 <FiPlus size={16} />
               </button>
@@ -256,6 +324,7 @@ export default function CreateRulePage() {
                     type="button"
                     onClick={() => removeReference(ref)}
                     className="ml-1 text-green-600 hover:text-green-800"
+                    disabled={isSubmitting}
                   >
                     <FiX size={14} />
                   </button>
@@ -275,11 +344,13 @@ export default function CreateRulePage() {
                 }}
                 className="flex-1 p-3 border border-gray-600 bg-gray-800 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Add a file reference and press Enter"
+                disabled={isSubmitting}
               />
               <button
                 type="button"
                 onClick={addReference}
-                className="px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                className="px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
+                disabled={isSubmitting}
               >
                 <FiPlus size={16} />
               </button>
@@ -299,6 +370,7 @@ export default function CreateRulePage() {
               rows={15}
               placeholder="Enter your rule content here..."
               required
+              disabled={isSubmitting}
             />
             <p className="mt-2 text-sm text-gray-600">
               This is the actual rule that will be applied to Cursor AI. Use clear, specific instructions.
@@ -319,6 +391,7 @@ export default function CreateRulePage() {
               type="button"
               onClick={() => router.back()}
               className="bg-gray-100 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-200 transition flex items-center gap-2"
+              disabled={isSubmitting}
             >
               <FiX size={16} />
               Cancel
@@ -327,5 +400,26 @@ export default function CreateRulePage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function CreateRulePage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-700 rounded mb-8"></div>
+            <div className="space-y-6">
+              <div className="h-12 bg-gray-700 rounded"></div>
+              <div className="h-12 bg-gray-700 rounded"></div>
+              <div className="h-32 bg-gray-700 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <CreateRuleForm />
+    </Suspense>
   );
 }
