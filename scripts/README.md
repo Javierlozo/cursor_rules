@@ -6,30 +6,35 @@ This directory contains SQL scripts for setting up and managing the Cursor Rules
 
 ### Core Setup Scripts
 
-- **`run-all-migrations.sql`** - Basic setup script that creates essential tables and policies
 - **`create-test-data.sql`** - Inserts sample data for testing
 - **`deploy.sh`** - Deployment script for the application
+- **`make-admin.sql`** - Makes current user an admin
+- **`final-cleanup.sql`** - Verifies database setup
 
 ### Migration Files
 
-- **`supabase/migrations/20241220000016_create_basic_tables_safe.sql`** - Safe version of basic tables
 - **`supabase/migrations/20241220000017_final_setup.sql`** - Complete database setup with all features
 
 ## 🚀 Quick Start
 
-1. **Run the basic setup:**
+1. **Run the complete setup:**
    ```sql
-   -- Copy and paste scripts/run-all-migrations.sql into Supabase SQL Editor
+   -- Copy and paste supabase/migrations/20241220000017_final_setup.sql into Supabase SQL Editor
    ```
 
-2. **Add test data (optional):**
+2. **Make yourself an admin (optional):**
+   ```sql
+   -- Copy and paste scripts/make-admin.sql into Supabase SQL Editor
+   ```
+
+3. **Add test data (optional):**
    ```sql
    -- Copy and paste scripts/create-test-data.sql into Supabase SQL Editor
    ```
 
-3. **For complete features, run the final migration:**
+4. **Verify setup (optional):**
    ```sql
-   -- Copy and paste supabase/migrations/20241220000017_final_setup.sql into Supabase SQL Editor
+   -- Copy and paste scripts/final-cleanup.sql into Supabase SQL Editor
    ```
 
 ## 📋 What Gets Created

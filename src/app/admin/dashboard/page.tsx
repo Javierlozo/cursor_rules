@@ -61,6 +61,8 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user) {
+      console.log("Current user:", user.email);
+      console.log("User metadata:", user.user_metadata);
       fetchUsers();
       fetchStats();
     }
@@ -89,21 +91,36 @@ export default function AdminDashboard() {
       }
 
       const data = await res.json();
+      console.log("API response:", data);
       
       // Enhance users with profile and stats data
       const enhancedUsers = await Promise.all(
         (data.users || []).map(async (user: User) => {
           try {
             // Get user profile
-            const { data: profile } = await supabase
-              .from("user_profiles")
-              .select("*")
-              .eq("user_id", user.id)
-              .single();
+            let profile = null;
+            try {
+              const { data: profileData } = await supabase
+                .from("user_profiles")
+                .select("*")
+                .eq("user_id", user.id)
+                .single();
+              profile = profileData;
+            } catch (error) {
+              console.log(`No profile found for user ${user.id}:`, error);
+              profile = null;
+            }
 
             // Get user stats
-            const { data: statsData } = await supabase
-              .rpc("get_user_stats", { user_uuid: user.id });
+            let statsData = null;
+            try {
+              const { data: statsResult } = await supabase
+                .rpc("get_user_stats", { user_uuid: user.id });
+              statsData = statsResult;
+            } catch (error) {
+              console.log(`No stats found for user ${user.id}:`, error);
+              statsData = null;
+            }
 
             return {
               ...user,

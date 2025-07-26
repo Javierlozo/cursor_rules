@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       email_confirmed_at: u.email_confirmed_at
     }));
 
-    return NextResponse.json(userList);
+    return NextResponse.json({ users: userList });
 
   } catch (err) {
     console.error("Unexpected error:", err);
