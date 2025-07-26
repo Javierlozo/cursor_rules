@@ -3,7 +3,13 @@
 import Link from "next/link";
 import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiDownload, FiUser } from "react-icons/fi";
 import { CursorRule } from "@/lib/types/cursor-rule";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+
+interface CursorRuleWithCreator extends CursorRule {
+  creator_username?: string;
+  creator_display_name?: string;
+}
 
 export default function CursorRulesList({
   rules = [],
@@ -11,8 +17,79 @@ export default function CursorRulesList({
   rules: CursorRule[];
 }) {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [rulesWithCreators, setRulesWithCreators] = useState<CursorRuleWithCreator[]>([]);
 
-  if (!rules.length) {
+  useEffect(() => {
+    fetchCreatorInfo();
+  }, [rules]);
+
+  const fetchCreatorInfo = async () => {
+    if (!rules.length) {
+      setRulesWithCreators(rules); // Set initial rules if no creators to fetch
+      return;
+    }
+
+    try {
+      // Get unique user IDs from rules
+      const userIds = [...new Set(rules.map(rule => rule.created_by).filter(Boolean))];
+      
+      if (userIds.length === 0) {
+        setRulesWithCreators(rules);
+        return;
+      }
+
+      // Check if user_profiles table exists using a simple query
+      let userProfilesExist = false;
+      try {
+        const { data: testQuery } = await supabase
+          .from("user_profiles")
+          .select("user_id")
+          .limit(1);
+        userProfilesExist = true;
+      } catch (error) {
+        // Table doesn't exist or not accessible
+        userProfilesExist = false;
+      }
+
+      if (!userProfilesExist) {
+        // user_profiles table doesn't exist, just use the rules as is
+        setRulesWithCreators(rules);
+        return;
+      }
+
+      // Fetch user profiles for all creators
+      const { data: profiles, error } = await supabase
+        .from("user_profiles")
+        .select("user_id, username, display_name")
+        .in("user_id", userIds);
+
+      if (error) {
+        console.error("Error fetching creator profiles:", error);
+        setRulesWithCreators(rules);
+        return;
+      }
+
+      // Create a map of user_id to profile info
+      const profileMap = new Map();
+      profiles?.forEach(profile => {
+        profileMap.set(profile.user_id, profile);
+      });
+
+      // Enhance rules with creator info
+      const enhancedRules = rules.map(rule => ({
+        ...rule,
+        creator_username: rule.created_by ? profileMap.get(rule.created_by)?.username : undefined,
+        creator_display_name: rule.created_by ? profileMap.get(rule.created_by)?.display_name : undefined,
+      }));
+
+      setRulesWithCreators(enhancedRules);
+    } catch (error) {
+      console.error("Error fetching creator information:", error);
+      setRulesWithCreators(rules);
+    }
+  };
+
+  if (!rulesWithCreators.length) {
     return (
       <div className="text-center py-12 bg-gray-800/50 rounded-xl border border-gray-700">
         <p className="text-gray-400 text-lg">
@@ -63,7 +140,7 @@ export default function CursorRulesList({
 
   return (
     <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
-      {rules.map((rule) => (
+      {rulesWithCreators.map((rule) => (
         <div
           key={rule.id}
           className="group bg-gray-800/50 border border-gray-700 rounded-xl p-6 hover:shadow-xl hover:border-blue-500/50 transition-all duration-300 relative"
@@ -83,9 +160,18 @@ export default function CursorRulesList({
                   <>
                     <span className="text-gray-500">•</span>
                     <FiUser className="w-4 h-4" />
-                    <span>
-                      by {rule.created_by}
-                    </span>
+                    {rule.creator_username ? (
+                      <Link
+                        href={`/profile/${rule.creator_username}`}
+                        className="text-blue-400 hover:text-blue-300 transition"
+                      >
+                        by {rule.creator_display_name || rule.creator_username}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-400">
+                        by {rule.creator_display_name || 'Unknown User'}
+                      </span>
+                    )}
                   </>
                 )}
               </div>

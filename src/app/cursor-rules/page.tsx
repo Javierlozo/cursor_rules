@@ -16,9 +16,21 @@ export default function CursorRulesPage() {
     const fetchRules = async () => {
       try {
         console.log("Fetching rules...");
-        const { data, error } = await supabase
-          .from("cursor_rules")
+        
+        // Try to use the enhanced view first, fall back to regular table
+        let { data, error } = await supabase
+          .from("cursor_rules_with_creator")
           .select("*");
+
+        // If view doesn't exist, use regular table
+        if (error && error.code === '42P01') {
+          console.log("View not found, using regular table...");
+          const result = await supabase
+            .from("cursor_rules")
+            .select("*");
+          data = result.data;
+          error = result.error;
+        }
 
         console.log("Supabase response:", { data, error });
 

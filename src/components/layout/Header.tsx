@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 import UserStats from "./UserStats";
+import NotificationsDropdown from "./NotificationsDropdown";
 import {
   FiHome,
   FiPlus,
@@ -24,23 +26,30 @@ import {
   FiClock,
   FiStar,
   FiShield,
+  FiBell,
 } from "react-icons/fi";
 
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const { user, signOut } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const notificationsRef = useRef<HTMLDivElement>(null);
 
   // Check if user is admin
   const isAdmin = user?.email === "admin@example.com" || user?.user_metadata?.role === "admin";
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsUserDropdownOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target as Node)) {
+        setIsNotificationsOpen(false);
       }
     }
 
@@ -49,6 +58,43 @@ export default function Header() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Fetch unread notification count
+  useEffect(() => {
+    if (user) {
+      fetchUnreadCount();
+    }
+  }, [user]);
+
+  const fetchUnreadCount = async () => {
+    if (!user) return;
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        console.warn("No session token available for notifications");
+        return;
+      }
+
+      const response = await fetch('/api/notifications/unread-count', {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUnreadNotifications(data?.count || 0);
+      } else {
+        console.warn("Failed to fetch unread notifications count:", response.status);
+        setUnreadNotifications(0);
+      }
+    } catch (error) {
+      console.warn("Error fetching unread count:", error);
+      setUnreadNotifications(0);
+    }
+  };
 
   const isActive = (path: string) => {
     return pathname === path ? "text-blue-500" : "text-gray-600";
@@ -132,6 +178,29 @@ export default function Header() {
             
             {/* Auth Section */}
             <div className="flex items-center gap-4 ml-6">
+              {user && (
+                <div className="relative" ref={notificationsRef}>
+                  {/* Notifications Button */}
+                  <button
+                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                    className="relative p-2 text-gray-300 hover:text-blue-400 transition"
+                  >
+                    <FiBell className="w-5 h-5" />
+                    {unreadNotifications > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Notifications Dropdown */}
+                  <NotificationsDropdown
+                    isOpen={isNotificationsOpen}
+                    onClose={() => setIsNotificationsOpen(false)}
+                  />
+                </div>
+              )}
+
               {user ? (
                 <div className="relative" ref={dropdownRef}>
                   {/* User Dropdown Button */}

@@ -4,22 +4,15 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { FiUser, FiMail, FiLock, FiShield, FiCalendar, FiSave, FiEdit3 } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiShield, FiCalendar, FiSave, FiEdit3, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiCheck, FiX } from "react-icons/fi";
 import Link from "next/link";
-
-interface UserProfile {
-  id: string;
-  email: string;
-  username?: string;
-  role?: string;
-  created_at: string;
-  last_sign_in_at?: string;
-}
+import { UserProfile, UpdateProfileData } from "@/lib/types/user-profile";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -31,9 +24,22 @@ export default function ProfilePage() {
   const [updatingPassword, setUpdatingPassword] = useState(false);
   
   // Profile update state
-  const [username, setUsername] = useState("");
-  const [updatingProfile, setUpdatingProfile] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState(false);
+
+  const [profileData, setProfileData] = useState<UpdateProfileData>({
+    id: "",
+    username: "",
+    display_name: "",
+    bio: "",
+    website: "",
+    github_username: "",
+    twitter_username: "",
+    location: "",
+    is_public: true,
+  });
 
   // Check authentication and redirect if not logged in
   useEffect(() => {
@@ -147,22 +153,74 @@ export default function ProfilePage() {
       }
 
       if (profileData) {
-        const userProfile: UserProfile = {
-          id: profileData.id,
-          email: profileData.email || "",
-          username: profileData.user_metadata?.username,
-          role: profileData.user_metadata?.role || "user",
-          created_at: profileData.created_at,
-          last_sign_in_at: profileData.last_sign_in_at
-        };
-        
-        setProfile(userProfile);
-        setUsername(userProfile.username || "");
+        // Store auth user data separately, don't try to cast to UserProfile
+        setProfile(profileData as any);
+      }
+
+      // Get user profile from user_profiles table
+      const { data: publicProfile, error: publicProfileError } = await supabase
+        .from("user_profiles")
+        .select("*")
+        .eq("user_id", user.id)
+        .single();
+
+      if (publicProfile) {
+        setUserProfile(publicProfile);
+        setProfileData({
+          id: publicProfile.id,
+          username: publicProfile.username,
+          display_name: publicProfile.display_name || "",
+          bio: publicProfile.bio || "",
+          website: publicProfile.website || "",
+          github_username: publicProfile.github_username || "",
+          twitter_username: publicProfile.twitter_username || "",
+          location: publicProfile.location || "",
+          is_public: publicProfile.is_public,
+        });
       }
     } catch (error) {
       setError("Failed to fetch profile");
     } finally {
       setLoadingProfile(false);
+    }
+  };
+
+  const checkUsernameAvailability = async (username: string, currentUsername?: string) => {
+    if (username.length < 3) {
+      setUsernameAvailable(null);
+      return;
+    }
+
+    // If username hasn't changed, it's available
+    if (currentUsername && username === currentUsername) {
+      setUsernameAvailable(true);
+      return;
+    }
+
+    setCheckingUsername(true);
+    try {
+      const { data } = await supabase
+        .from("user_profiles")
+        .select("username")
+        .eq("username", username)
+        .single();
+
+      setUsernameAvailable(!data);
+    } catch (error) {
+      setUsernameAvailable(true);
+    } finally {
+      setCheckingUsername(false);
+    }
+  };
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const username = e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    setProfileData({ ...profileData, username });
+    
+    if (username.length >= 3) {
+      checkUsernameAvailability(username, userProfile?.username);
+    } else {
+      setUsernameAvailable(null);
     }
   };
 
@@ -195,7 +253,6 @@ export default function ProfilePage() {
     }
 
     try {
-      // Update password
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -221,19 +278,65 @@ export default function ProfilePage() {
     setError("");
     setSuccess("");
 
-    try {
-      // Update user metadata
-      const { error } = await supabase.auth.updateUser({
-        data: { username: username.trim() }
-      });
+    if (!profileData.username) {
+      setError("Username is required");
+      setUpdatingProfile(false);
+      return;
+    }
 
-      if (error) {
-        setError(error.message);
+    if (usernameAvailable !== true) {
+      setError("Please choose an available username");
+      setUpdatingProfile(false);
+      return;
+    }
+
+    try {
+      if (userProfile) {
+        // Update existing profile
+        const { error } = await supabase
+          .from("user_profiles")
+          .update({
+            username: profileData.username,
+            display_name: profileData.display_name,
+            bio: profileData.bio,
+            website: profileData.website,
+            github_username: profileData.github_username,
+            twitter_username: profileData.twitter_username,
+            location: profileData.location,
+            is_public: profileData.is_public,
+          })
+          .eq("id", profileData.id);
+
+        if (error) {
+          setError(error.message || "Failed to update profile");
+        } else {
+          setSuccess("Profile updated successfully!");
+          setEditingProfile(false);
+          fetchProfile();
+        }
       } else {
-        setSuccess("Profile updated successfully!");
-        setEditingProfile(false);
-        // Refresh profile data
-        fetchProfile();
+        // Create new profile
+        const { error } = await supabase
+          .from("user_profiles")
+          .insert([{
+            user_id: user.id,
+            username: profileData.username,
+            display_name: profileData.display_name,
+            bio: profileData.bio,
+            website: profileData.website,
+            github_username: profileData.github_username,
+            twitter_username: profileData.twitter_username,
+            location: profileData.location,
+            is_public: profileData.is_public,
+          }]);
+
+        if (error) {
+          setError(error.message || "Failed to create profile");
+        } else {
+          setSuccess("Profile created successfully!");
+          setEditingProfile(false);
+          fetchProfile();
+        }
       }
     } catch (error) {
       setError("Failed to update profile");
@@ -298,13 +401,117 @@ export default function ProfilePage() {
                   </label>
                   {editingProfile ? (
                     <form onSubmit={updateProfile} className="space-y-4">
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter username"
-                      />
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={profileData.username}
+                          onChange={handleUsernameChange}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter username"
+                          required
+                          minLength={3}
+                          maxLength={20}
+                        />
+                        {checkingUsername && (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                        )}
+                        {usernameAvailable === false && (
+                          <FiX className="w-4 h-4 text-red-400" title="Username not available" />
+                        )}
+                        {usernameAvailable === true && (
+                          <FiCheck className="w-4 h-4 text-green-400" title="Username available" />
+                        )}
+                      </div>
+                      <div>
+                        <label htmlFor="display_name" className="block text-sm font-medium text-gray-400 mb-1">
+                          Display Name
+                        </label>
+                        <input
+                          type="text"
+                          id="display_name"
+                          value={profileData.display_name}
+                          onChange={(e) => setProfileData({ ...profileData, display_name: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter display name"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="bio" className="block text-sm font-medium text-gray-400 mb-1">
+                          Bio
+                        </label>
+                        <textarea
+                          id="bio"
+                          value={profileData.bio}
+                          onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          rows={3}
+                          placeholder="Write a brief bio"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="website" className="block text-sm font-medium text-gray-400 mb-1">
+                          Website
+                        </label>
+                        <input
+                          type="url"
+                          id="website"
+                          value={profileData.website}
+                          onChange={(e) => setProfileData({ ...profileData, website: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="github_username" className="block text-sm font-medium text-gray-400 mb-1">
+                          GitHub Username
+                        </label>
+                        <input
+                          type="text"
+                          id="github_username"
+                          value={profileData.github_username}
+                          onChange={(e) => setProfileData({ ...profileData, github_username: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="your-github-username"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="twitter_username" className="block text-sm font-medium text-gray-400 mb-1">
+                          Twitter Username
+                        </label>
+                        <input
+                          type="text"
+                          id="twitter_username"
+                          value={profileData.twitter_username}
+                          onChange={(e) => setProfileData({ ...profileData, twitter_username: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="your-twitter-username"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="location" className="block text-sm font-medium text-gray-400 mb-1">
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          id="location"
+                          value={profileData.location}
+                          onChange={(e) => setProfileData({ ...profileData, location: e.target.value })}
+                          className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Enter your location"
+                        />
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="is_public"
+                          checked={profileData.is_public}
+                          onChange={(e) => setProfileData({ ...profileData, is_public: e.target.checked })}
+                          className="mr-2 text-blue-400 focus:ring-blue-500 border-gray-600 rounded"
+                        />
+                        <label htmlFor="is_public" className="text-sm text-gray-400">
+                          Make my profile public
+                        </label>
+                      </div>
                       <div className="flex space-x-3">
                         <button
                           type="submit"
@@ -326,7 +533,7 @@ export default function ProfilePage() {
                     <div className="flex items-center p-3 bg-gray-700 rounded-lg">
                       <FiUser className="text-gray-400 mr-2" />
                       <span className="text-white">
-                        {profile.username || "No username set"}
+                        {profileData.username || "No username set"}
                       </span>
                     </div>
                   )}

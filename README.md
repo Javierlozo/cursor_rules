@@ -67,14 +67,19 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
 ```
 
-### 3. Database Setup
+## Database Setup
 
-1. Create a new Supabase project
-2. Run the migrations in `supabase/migrations/` in order:
-   - `20241220000000_add_notifications_table.sql`
-   - `20241220000001_initial_schema.sql`
-   - `20241220000006_fix_all_warnings.sql`
-3. Execute the seed data in `supabase/seed.sql`
+1. **Run migrations in order:**
+   ```bash
+   # Run these migrations in sequence:
+   supabase/migrations/20241220000016_create_basic_tables_safe.sql
+   supabase/migrations/20241220000014_handle_existing_tables.sql
+   ```
+   
+   **Migration Overview:**
+   
+   - **Step 1:** `20241220000016_create_basic_tables_safe.sql` - Creates core tables (categories, cursor_rules, rule_downloads, rule_likes)
+   - **Step 2:** `20241220000014_handle_existing_tables.sql` - Adds social features (user_profiles, user_follows, notifications)
 
 ### 4. Development
 

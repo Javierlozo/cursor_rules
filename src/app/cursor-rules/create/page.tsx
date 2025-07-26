@@ -67,19 +67,21 @@ function CreateRuleForm() {
     setError(null);
     setSuccess(false);
 
+    if (!user) {
+      setError("You must be logged in to create a rule");
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      // Get current session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        setError("You must be logged in to create rules");
-        setIsSubmitting(false);
-        return;
-      }
+      const ruleData = {
+        ...formData,
+        created_by: user.id, // Explicitly set the created_by field
+      };
 
       const { data, error } = await supabase
         .from("cursor_rules")
-        .insert([formData])
+        .insert([ruleData])
         .select()
         .single();
 
