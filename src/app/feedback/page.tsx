@@ -34,7 +34,7 @@ User Agent: ${navigator.userAgent}
       `.trim();
 
       // Open default email client
-      const mailtoLink = `mailto:feedback@cursorruleshub.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                        const mailtoLink = `mailto:luis.lozoya.tech@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
       window.open(mailtoLink);
 
       setIsSubmitted(true);
@@ -225,13 +225,13 @@ User Agent: ${navigator.userAgent}
           </form>
 
           <div className="mt-6 p-4 bg-blue-900/20 border border-blue-700/30 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-300 mb-2">How it works</h3>
-            <ul className="text-sm text-blue-200 space-y-1">
-              <li>• Your feedback will be sent via email to our team</li>
-              <li>• We'll review and respond to all feedback</li>
-              <li>• For bug reports, please include steps to reproduce</li>
-              <li>• For feature requests, explain the use case and benefits</li>
-            </ul>
+                                    <h3 className="text-sm font-medium text-blue-300 mb-2">How it works</h3>
+                        <ul className="text-sm text-blue-200 space-y-1">
+                          <li>• Your feedback will be sent via email to luis.lozoya.tech@gmail.com</li>
+                          <li>• We'll review and respond to all feedback</li>
+                          <li>• For bug reports, please include steps to reproduce</li>
+                          <li>• For feature requests, explain the use case and benefits</li>
+                        </ul>
           </div>
         </div>
       </div>
