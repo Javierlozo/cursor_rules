@@ -74,18 +74,12 @@ export async function GET(request: NextRequest) {
       .from("cursor_rules")
       .select("*", { count: "exact", head: true });
 
-    // Get total downloads
-    const { data: rules } = await supabase
-      .from("cursor_rules")
-      .select("downloads");
     
-    const totalDownloads = rules?.reduce((sum, rule) => sum + (rule.downloads || 0), 0) || 0;
 
     return NextResponse.json({
       totalUsers,
       activeUsers,
       totalRules: totalRules || 0,
-      totalDownloads,
     });
 
   } catch (err) {

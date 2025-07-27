@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { FiUsers, FiTrash2, FiMail, FiShield, FiActivity, FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiDownload, FiHeart, FiEye, FiEdit, FiX } from "react-icons/fi";
+import { FiUsers, FiTrash2, FiMail, FiShield, FiActivity, FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiHeart, FiEye, FiEdit, FiX } from "react-icons/fi";
 import Link from "next/link";
 
 interface User {
@@ -25,7 +25,6 @@ interface User {
   };
   stats?: {
     total_rules: number;
-    total_downloads: number;
     total_likes: number;
     followers_count: number;
     following_count: number;
@@ -36,7 +35,6 @@ interface AdminStats {
   totalUsers: number;
   activeUsers: number;
   totalRules: number;
-  totalDownloads: number;
   usersWithProfiles: number;
   publicProfiles: number;
 }
@@ -48,7 +46,6 @@ export default function AdminDashboard() {
     totalUsers: 0,
     activeUsers: 0,
     totalRules: 0,
-    totalDownloads: 0,
     usersWithProfiles: 0,
     publicProfiles: 0,
   });
@@ -123,7 +120,6 @@ export default function AdminDashboard() {
               profile: profile || null,
               stats: statsData?.[0] || {
                 total_rules: 0,
-                total_downloads: 0,
                 total_likes: 0,
                 followers_count: 0,
                 following_count: 0,
@@ -135,7 +131,6 @@ export default function AdminDashboard() {
               profile: null,
               stats: {
                 total_rules: 0,
-                total_downloads: 0,
                 total_likes: 0,
                 followers_count: 0,
                 following_count: 0,
@@ -350,7 +345,7 @@ export default function AdminDashboard() {
         <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
         
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
             <div className="flex items-center">
               <FiUsers className="text-blue-500 text-2xl mr-3" />
@@ -393,7 +388,7 @@ export default function AdminDashboard() {
           
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
             <div className="flex items-center">
-              <FiDownload className="text-green-500 text-2xl mr-3" />
+              <FiEdit className="text-green-500 text-2xl mr-3" />
               <div>
                 <p className="text-gray-400 text-sm">Total Rules</p>
                 <p className="text-2xl font-bold">{stats.totalRules}</p>
@@ -401,15 +396,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <div className="flex items-center">
-              <FiHeart className="text-red-500 text-2xl mr-3" />
-              <div>
-                <p className="text-gray-400 text-sm">Total Downloads</p>
-                <p className="text-2xl font-bold">{stats.totalDownloads}</p>
-              </div>
-            </div>
-          </div>
+
         </div>
 
         {/* Invite User Section */}
@@ -516,8 +503,6 @@ export default function AdminDashboard() {
                       <td className="p-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2 text-xs">
-                            <FiDownload className="w-3 h-3 text-green-400" />
-                            <span>{user.stats?.total_downloads || 0}</span>
                             <FiHeart className="w-3 h-3 text-red-400" />
                             <span>{user.stats?.total_likes || 0}</span>
                           </div>
@@ -670,15 +655,12 @@ export default function AdminDashboard() {
                 {selectedUser.stats && (
                   <div>
                     <h4 className="text-lg font-medium mb-3">User Statistics</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center p-3 bg-gray-700 rounded">
                         <p className="text-2xl font-bold text-blue-400">{selectedUser.stats.total_rules}</p>
                         <p className="text-xs text-gray-400">Rules</p>
                       </div>
-                      <div className="text-center p-3 bg-gray-700 rounded">
-                        <p className="text-2xl font-bold text-green-400">{selectedUser.stats.total_downloads}</p>
-                        <p className="text-xs text-gray-400">Downloads</p>
-                      </div>
+
                       <div className="text-center p-3 bg-gray-700 rounded">
                         <p className="text-2xl font-bold text-red-400">{selectedUser.stats.total_likes}</p>
                         <p className="text-xs text-gray-400">Likes</p>

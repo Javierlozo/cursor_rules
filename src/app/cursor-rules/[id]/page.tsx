@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { CursorRule } from "@/lib/types/cursor-rule";
-import { FiArrowLeft, FiCopy, FiCheck, FiDownload, FiUser, FiClock, FiCode, FiFile, FiTag } from "react-icons/fi";
+import { FiArrowLeft, FiCopy, FiCheck, FiUser, FiClock, FiCode, FiFile, FiTag } from "react-icons/fi";
 import Link from "next/link";
 
 export default function CursorRuleDetailPage() {
@@ -60,31 +60,7 @@ export default function CursorRuleDetailPage() {
     }
   };
 
-  const trackDownload = async () => {
-    if (!rule) return;
-    
-    try {
-      await fetch('/api/cursor-rules/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ruleId: rule.id }),
-      });
-    } catch (error) {
-      console.error('Failed to track download:', error);
-    }
-  };
 
-  const handleDownload = async () => {
-    if (!rule) return;
-    
-    // Track the download
-    await trackDownload();
-    
-    // Copy to clipboard
-    await copyRuleContent();
-  };
 
   if (loading) {
     return (
@@ -153,11 +129,11 @@ export default function CursorRuleDetailPage() {
         {/* Action Buttons */}
         <div className="flex gap-4 mb-8">
           <button
-            onClick={handleDownload}
+            onClick={copyRuleContent}
             className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
           >
-            <FiDownload className="w-4 h-4" />
-            Download & Copy
+            <FiCopy className="w-4 h-4" />
+            Copy Rule
           </button>
           
           <button
@@ -239,10 +215,6 @@ export default function CursorRuleDetailPage() {
             <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Statistics</h3>
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Downloads</span>
-                  <span className="text-white font-medium">{rule.downloads || 0}</span>
-                </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Likes</span>
                   <span className="text-white font-medium">{rule.likes || 0}</span>

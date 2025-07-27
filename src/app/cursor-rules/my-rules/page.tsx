@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { CursorRule } from "@/lib/types/cursor-rule";
-import { FiEdit, FiTrash2, FiEye, FiDownload, FiCopy, FiCheck } from "react-icons/fi";
+import { FiEdit, FiTrash2, FiEye, FiCopy, FiCheck } from "react-icons/fi";
 
 export default function MyRulesPage() {
   const router = useRouter();
@@ -96,24 +96,7 @@ export default function MyRulesPage() {
     }
   };
 
-  const trackDownload = async (ruleId: string) => {
-    try {
-      await fetch('/api/cursor-rules/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ruleId }),
-      });
-    } catch (error) {
-      console.error('Failed to track download:', error);
-    }
-  };
 
-  const handleDownload = async (ruleId: string, content: string) => {
-    await trackDownload(ruleId);
-    await copyRuleContent(ruleId, content);
-  };
 
   // Show loading state
   if (loading) {
@@ -213,13 +196,6 @@ export default function MyRulesPage() {
                   </div>
                   
                   <div className="flex gap-2">
-                    <button
-                      onClick={() => handleDownload(rule.id, rule.rule_content)}
-                      className="text-gray-400 hover:text-green-500 transition-colors p-2 rounded-full hover:bg-green-900/20"
-                      title="Download and copy rule"
-                    >
-                      <FiDownload className="w-4 h-4" />
-                    </button>
                     <button
                       onClick={() => copyRuleContent(rule.id, rule.rule_content)}
                       className="text-gray-400 hover:text-blue-500 transition-colors p-2 rounded-full hover:bg-blue-900/20"

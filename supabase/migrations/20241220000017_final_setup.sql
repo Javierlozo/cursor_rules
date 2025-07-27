@@ -390,18 +390,17 @@ BEGIN
     
     RAISE NOTICE 'Found % users. Using user ID: % (Email: %)', user_count, first_user_id, first_user_email;
     
-    -- Create a user profile
-    INSERT INTO user_profiles (user_id, username, display_name, bio, is_public) VALUES
-    (first_user_id, 
-     'luisloart', 
-     'Luis', 
-     '',
-     true
-    ) ON CONFLICT (user_id) DO UPDATE SET
-        username = EXCLUDED.username,
-        display_name = EXCLUDED.display_name,
-        bio = EXCLUDED.bio,
-        is_public = EXCLUDED.is_public;
+    -- Create a user profile (only if username doesn't exist)
+    INSERT INTO user_profiles (user_id, username, display_name, bio, is_public) 
+    SELECT 
+        first_user_id, 
+        'luisloart', 
+        'Luis', 
+        '',
+        true
+    WHERE NOT EXISTS (
+        SELECT 1 FROM user_profiles WHERE username = 'luisloart'
+    );
 
     RAISE NOTICE 'User profile created/updated successfully!';
 END $$;

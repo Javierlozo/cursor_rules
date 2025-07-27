@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface UserStats {
   rulesCount: number;
-  downloadsCount: number;
   likesCount: number;
 }
 
@@ -14,7 +13,6 @@ export default function UserStats() {
   const { user } = useAuth();
   const [stats, setStats] = useState<UserStats>({
     rulesCount: 0,
-    downloadsCount: 0,
     likesCount: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -42,7 +40,6 @@ export default function UserStats() {
       // For now, just show rules count since downloads/likes tables might not exist
       setStats({
         rulesCount: rulesCount || 0,
-        downloadsCount: 0, // Will be implemented when downloads table is ready
         likesCount: 0, // Will be implemented when likes table is ready
       });
     } catch (error) {
@@ -50,7 +47,6 @@ export default function UserStats() {
       // Set default values on error
       setStats({
         rulesCount: 0,
-        downloadsCount: 0,
         likesCount: 0,
       });
     } finally {
@@ -88,14 +84,10 @@ export default function UserStats() {
   }
 
   return (
-    <div className="grid grid-cols-3 gap-4 text-center">
+    <div className="grid grid-cols-2 gap-4 text-center">
       <div>
         <p className="text-2xl font-bold text-blue-400">{stats.rulesCount}</p>
         <p className="text-xs text-gray-400">Rules</p>
-      </div>
-      <div>
-        <p className="text-2xl font-bold text-green-400">{stats.downloadsCount}</p>
-        <p className="text-xs text-gray-400">Downloads</p>
       </div>
       <div>
         <p className="text-2xl font-bold text-purple-400">{stats.likesCount}</p>

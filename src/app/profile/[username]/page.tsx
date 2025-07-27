@@ -77,7 +77,6 @@ export default function PublicProfilePage() {
         ...profileData,
         stats: statsData?.[0] || {
           total_rules: 0,
-          total_downloads: 0,
           total_likes: 0,
           followers_count: 0,
           following_count: 0,
@@ -278,14 +277,10 @@ export default function PublicProfilePage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
             <div className="text-2xl font-bold text-blue-400">{profile.stats.total_rules}</div>
             <div className="text-sm text-gray-400">Rules</div>
-          </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-green-400">{profile.stats.total_downloads}</div>
-            <div className="text-sm text-gray-400">Downloads</div>
           </div>
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
             <div className="text-2xl font-bold text-red-400">{profile.stats.total_likes}</div>
@@ -334,8 +329,6 @@ export default function PublicProfilePage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <FiDownload className="w-4 h-4" />
-                      <span>{rule.downloads || 0}</span>
                       <FiHeart className="w-4 h-4" />
                       <span>{rule.likes || 0}</span>
                     </div>
