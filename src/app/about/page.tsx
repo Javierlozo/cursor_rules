@@ -1,10 +1,10 @@
 export default function AboutPage() {
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Hero Section */}
         <section className="text-center mb-16">
-          <h1 className="text-5xl font-bold mb-6">About Cursor Rules Hub</h1>
+          <h1 className="text-4xl font-bold text-white mb-8">About Cursor Rules Hub</h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
             An independent community platform for sharing and discovering Cursor rules. 
             Built by developers, for developers - not affiliated with Cursor but passionate about helping the community.
@@ -13,7 +13,7 @@ export default function AboutPage() {
         
         {/* What are Cursor Rules */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">What are Cursor Rules?</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">What are Cursor Rules?</h2>
           <div className="grid gap-8 md:grid-cols-2 items-center">
             <div>
               <p className="text-lg text-gray-300 mb-6">
@@ -38,7 +38,7 @@ export default function AboutPage() {
 
         {/* Why Use Cursor Rules */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Why Use Cursor Rules?</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">Why Use Cursor Rules?</h2>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="p-8 border border-gray-700 rounded-xl bg-gradient-to-br from-blue-900/20 to-indigo-900/20">
               <div className="text-3xl mb-4">🚀</div>
@@ -77,7 +77,7 @@ export default function AboutPage() {
 
         {/* Types of Rules */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Types of Cursor Rules</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">Types of Cursor Rules</h2>
           <div className="grid gap-6 md:grid-cols-3 mb-12">
             <div className="p-6 border border-gray-700 rounded-xl bg-gray-800">
               <h3 className="text-lg font-semibold mb-3 text-blue-300">Project Rules</h3>
@@ -117,8 +117,8 @@ export default function AboutPage() {
 
         {/* How Rules Work */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">How Do Cursor Rules Work?</h2>
-          <div className="max-w-4xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">How Do Cursor Rules Work?</h2>
+          <div className="max-w-6xl mx-auto">
             <div className="space-y-8">
               <div className="flex gap-6 items-start">
                 <div className="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl flex-shrink-0">
@@ -162,7 +162,7 @@ export default function AboutPage() {
 
         {/* Example Rules */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Example Rules</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">Example Rules</h2>
           <div className="space-y-6">
             <div className="p-8 border border-gray-700 rounded-xl bg-gray-800">
               <h3 className="text-xl font-semibold mb-4 text-white">RPC Service Boilerplate</h3>
@@ -194,25 +194,25 @@ export default function AboutPage() {
 
         {/* Getting Started */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Getting Started</h2>
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-xl border border-blue-100">
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">Getting Started</h2>
+          <div className="bg-gradient-to-r from-blue-900/20 to-indigo-900/20 p-8 rounded-xl border border-blue-700/30">
             <div className="text-center max-w-3xl mx-auto">
               <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-2xl font-bold mb-4 text-blue-800">Ready to Create Your First Rule?</h3>
-              <p className="text-blue-700 mb-8 text-lg">
+              <h3 className="text-2xl font-bold mb-4 text-blue-300">Ready to Create Your First Rule?</h3>
+              <p className="text-gray-300 mb-8 text-lg">
                 Start by creating a rule for your most common coding patterns. Think about the conventions 
                 your team follows and the patterns you want to enforce.
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a
                   href="/cursor-rules/create"
-                  className="bg-blue-500 text-white px-8 py-4 rounded-lg hover:bg-blue-600 transition font-medium"
+                  className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium"
                 >
                   Create Your First Rule
                 </a>
                 <a
                   href="/cursor-rules"
-                  className="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-50 transition font-medium border border-blue-200"
+                  className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium border border-gray-600"
                 >
                   Browse Community Rules
                 </a>
@@ -223,26 +223,26 @@ export default function AboutPage() {
 
         {/* Community Benefits */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Why Share Rules with the Community?</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white text-center">Why Share Rules with the Community?</h2>
           <div className="grid gap-8 md:grid-cols-3">
-            <div className="text-center p-8 border rounded-xl">
+            <div className="text-center p-8 border border-gray-700 rounded-xl bg-gray-800/50">
               <div className="text-5xl mb-6">🤝</div>
-              <h3 className="text-xl font-semibold mb-4">Help Others</h3>
-              <p className="text-gray-700">
+              <h3 className="text-xl font-semibold mb-4 text-white">Help Others</h3>
+              <p className="text-gray-300">
                 Share your expertise and help other developers learn from your experience and best practices.
               </p>
             </div>
-            <div className="text-center p-8 border rounded-xl">
+            <div className="text-center p-8 border border-gray-700 rounded-xl bg-gray-800/50">
               <div className="text-5xl mb-6">💡</div>
-              <h3 className="text-xl font-semibold mb-4">Discover New Patterns</h3>
-              <p className="text-gray-700">
+              <h3 className="text-xl font-semibold mb-4 text-white">Discover New Patterns</h3>
+              <p className="text-gray-300">
                 Learn from the community and discover new coding patterns and best practices you might not have considered.
               </p>
             </div>
-            <div className="text-center p-8 border rounded-xl">
+            <div className="text-center p-8 border border-gray-700 rounded-xl bg-gray-800/50">
               <div className="text-5xl mb-6">🚀</div>
-              <h3 className="text-xl font-semibold mb-4">Build Together</h3>
-              <p className="text-gray-700">
+              <h3 className="text-xl font-semibold mb-4 text-white">Build Together</h3>
+              <p className="text-gray-300">
                 Contribute to a growing library of proven patterns and coding standards that benefit everyone.
               </p>
             </div>
@@ -252,7 +252,7 @@ export default function AboutPage() {
         {/* Developer Showcase */}
         <section id="developer" className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Built with expertise by Luis Lozoya</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-white">Built with expertise by Luis Lozoya</h2>
                           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
                 Senior Full Stack Engineer with extensive experience in building secure, high-performance web applications for businesses of all sizes
               </p>
@@ -370,20 +370,20 @@ export default function AboutPage() {
 
         {/* Call to Action */}
         <section className="text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Join the Community?</h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-6 text-white">Ready to Join the Community?</h2>
+          <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
             Start sharing your knowledge and help build the best Cursor rules community!
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <a
               href="/cursor-rules/create"
-              className="bg-green-500 text-white px-8 py-4 rounded-lg hover:bg-green-600 transition font-medium"
+              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium"
             >
               Create Your First Rule
             </a>
             <a
               href="/cursor-rules"
-              className="bg-blue-500 text-white px-8 py-4 rounded-lg hover:bg-blue-600 transition font-medium"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium"
             >
               Browse Community Rules
             </a>

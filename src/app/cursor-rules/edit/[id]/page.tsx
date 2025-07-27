@@ -55,7 +55,6 @@ export default function EditRulePage() {
       }
 
       if (data) {
-        console.log("Rule found:", data.name);
         setFormData({
           name: data.name,
           description: data.description || "",
@@ -68,7 +67,6 @@ export default function EditRulePage() {
         });
         setRuleLoaded(true);
       } else {
-        console.log("Rule not found for ID:", ruleId);
         setError("Rule not found or you don't have permission to edit it");
         setRuleLoaded(false);
       }
@@ -100,11 +98,9 @@ export default function EditRulePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted. ruleLoaded:", ruleLoaded, "formData:", formData);
     
     // Immediately return if rule is not loaded
     if (!ruleLoaded) {
-      console.log("Rule not loaded, preventing submission");
       setError("Rule not found or you don't have permission to edit it");
       return;
     }
@@ -114,7 +110,6 @@ export default function EditRulePage() {
 
     // Check if we have valid form data
     if (!formData.name || !formData.rule_content) {
-      console.log("Form data invalid, preventing submission");
       setError("Please fill in all required fields");
       setIsSubmitting(false);
       return;
@@ -218,13 +213,13 @@ export default function EditRulePage() {
     );
   }
 
-  console.log("Rendering page. ruleLoaded:", ruleLoaded, "error:", error, "isLoading:", isLoading);
+
   
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+              <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Edit Rule</h1>
+                      <h1 className="text-3xl font-bold text-center">Edit Rule</h1>
           <a
             href="/cursor-rules/my-rules"
             className="text-blue-500 hover:text-blue-600 transition"

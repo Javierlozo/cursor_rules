@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
+import { 
+  authenticateRequest, 
+  validateRuleData, 
+  handleApiError, 
+  createSuccessResponse,
+  createErrorResponse,
+  prepareRuleData 
+} from "@/lib/api-utils";
 
 export async function GET(request: NextRequest) {
   try {
@@ -64,60 +72,14 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: "Authentication required" },
-        { status: 401 }
-      );
-    }
-
-    const token = authHeader.substring(7);
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user) {
-      return NextResponse.json(
-        { error: "Invalid authentication token" },
-        { status: 401 }
-      );
-    }
-
+    const user = await authenticateRequest(request);
     const body: CreateRuleData = await request.json();
-
-    // Validation
-    if (!body.name || !body.rule_content) {
-      return NextResponse.json(
-        { error: "Name and rule_content are required" },
-        { status: 400 }
-      );
-    }
-
-    if (body.name.length > 255) {
-      return NextResponse.json(
-        { error: "Name must be less than 255 characters" },
-        { status: 400 }
-      );
-    }
-
-    // Prepare data with defaults
+    
+    validateRuleData(body);
+    
     const ruleData = {
-      name: body.name.trim(),
-      description: body.description?.trim() || null,
-      pattern: body.pattern?.trim() || null,
-      rule_content: body.rule_content.trim(),
-      file_references: body.file_references || [],
-      tags: body.tags || [],
-      category: body.category || null,
-      framework: body.framework || null,
-      downloads: 0,
-      likes: 0,
-      created_by: user.id, // Set the authenticated user
-      cursor_properties: {
-        color: '#3B82F6',
-        size: 'medium',
-        shape: 'default'
-      }
+      ...prepareRuleData(body),
+      created_by: user.id
     };
 
     const { data, error } = await supabase
@@ -128,19 +90,11 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error("Supabase error:", error);
-      return NextResponse.json(
-        { error: "Failed to create rule", details: error.message },
-        { status: 500 }
-      );
+      return createErrorResponse("Failed to create rule", 500);
     }
 
-    console.log("Rule created successfully:", data.name);
-    return NextResponse.json(data, { status: 201 });
+    return createSuccessResponse(data, 201);
   } catch (err) {
-    console.error("Unexpected error:", err);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return handleApiError(err);
   }
 }

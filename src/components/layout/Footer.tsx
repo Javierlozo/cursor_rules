@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { FiGithub, FiTwitter, FiMail, FiDownload } from "react-icons/fi";
+import { FiGithub, FiTwitter, FiMail, FiDownload, FiMessageSquare } from "react-icons/fi";
 
 export default function Footer() {
   return (
     <footer className="border-t border-gray-800 mt-auto bg-gray-900/95 backdrop-blur-sm text-gray-300">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <h3 className="font-semibold mb-3 text-white">
@@ -16,6 +16,14 @@ export default function Footer() {
               editor. Share and discover rules to enhance your coding
               experience.
             </p>
+            <div className="mt-3">
+              <Link
+                href="/about"
+                className="text-blue-400 hover:text-blue-300 text-sm inline-flex items-center gap-1"
+              >
+                Learn More →
+              </Link>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -77,11 +85,47 @@ export default function Footer() {
                 </a>
               </li>
               <li>
+                <a
+                  href="https://github.com/getcursor/cursor"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-blue-400 inline-flex items-center gap-2"
+                >
+                  <FiGithub className="w-4 h-4" />
+                  Cursor GitHub
+                </a>
+              </li>
+
+            </ul>
+          </div>
+
+          {/* Feedback */}
+          <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
+            <h3 className="font-semibold mb-3 text-white">Help & Feedback</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
                 <Link
-                  href="/docs/getting-started"
+                  href="/feedback"
+                  className="text-gray-400 hover:text-blue-400 inline-flex items-center gap-2"
+                >
+                  <FiMessageSquare className="w-4 h-4" />
+                  Send Feedback
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guidelines"
                   className="text-gray-400 hover:text-blue-400"
                 >
-                  Getting Started
+                  Community Guidelines
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="text-gray-400 hover:text-blue-400"
+                >
+                  About the Project
                 </Link>
               </li>
             </ul>

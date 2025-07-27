@@ -148,11 +148,11 @@ export default function NotificationsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+              <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Notifications</h1>
+            <h1 className="text-3xl font-bold mb-2 text-center">Notifications</h1>
             <p className="text-gray-400">
               {unreadCount > 0 ? `${unreadCount} unread` : 'All caught up!'}
             </p>

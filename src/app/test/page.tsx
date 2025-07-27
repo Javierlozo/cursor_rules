@@ -25,7 +25,7 @@ export default function TestPage() {
         body: JSON.stringify(testRule),
       });
       const data = await res.json();
-      console.log("Created:", data);
+
       fetchRules();
     } catch (error) {
       console.error("Error creating rule:", error);
@@ -42,7 +42,6 @@ export default function TestPage() {
       if (Array.isArray(data)) {
         setRules(data);
       } else {
-        console.error("Received non-array data:", data);
         setRules([]); // Set empty array as fallback
       }
     } catch (error) {

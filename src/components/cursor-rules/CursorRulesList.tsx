@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiDownload, FiUser } from "react-icons/fi";
+import { FiFile, FiCode, FiCopy, FiCheck, FiClock, FiUser } from "react-icons/fi";
 import { CursorRule } from "@/lib/types/cursor-rule";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -116,27 +116,7 @@ export default function CursorRulesList({
     }
   };
 
-  const trackDownload = async (ruleId: string) => {
-    try {
-      await fetch('/api/cursor-rules/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ruleId }),
-      });
-    } catch (error) {
-      console.error('Failed to track download:', error);
-    }
-  };
 
-  const handleDownload = async (ruleId: string, content: string) => {
-    // Track the download
-    await trackDownload(ruleId);
-    
-    // Copy to clipboard
-    await copyRuleContent(ruleId, content);
-  };
 
   return (
     <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
@@ -177,13 +157,6 @@ export default function CursorRulesList({
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={() => handleDownload(rule.id, rule.rule_content)}
-                className="text-gray-400 hover:text-green-500 transition-colors p-2 rounded-full hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-200"
-                title="Download and copy rule"
-              >
-                <FiDownload className="w-5 h-5" />
-              </button>
               <button
                 onClick={() => copyRuleContent(rule.id, rule.rule_content)}
                 className="text-gray-400 hover:text-blue-500 transition-colors p-2 rounded-full hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200"

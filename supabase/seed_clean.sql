@@ -6,17 +6,18 @@ INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, creat
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert categories
-INSERT INTO categories (name, description, color) VALUES
-('React', 'React components, hooks, and patterns', '#61DAFB'),
-('API', 'Backend API patterns and best practices', '#FF6B6B'),
-('Testing', 'Testing strategies and frameworks', '#4ECDC4'),
-('Database', 'Database operations and security', '#45B7D1'),
-('Security', 'Security best practices and patterns', '#FFE66D'),
-('Performance', 'Performance optimization patterns', '#FF6B9D'),
-('TypeScript', 'TypeScript patterns and best practices', '#3178C6'),
-('Node.js', 'Node.js server patterns and practices', '#68A063'),
-('CSS', 'CSS and styling patterns', '#1572B6'),
-('Git', 'Git workflow and commit patterns', '#F05032');
+INSERT INTO categories (name, description) VALUES
+('React', 'React components, hooks, and patterns'),
+('API', 'Backend API patterns and best practices'),
+('Testing', 'Testing strategies and frameworks'),
+('Database', 'Database operations and security'),
+('Security', 'Security best practices and patterns'),
+('Performance', 'Performance optimization patterns'),
+('TypeScript', 'TypeScript patterns and best practices'),
+('Node.js', 'Node.js server patterns and practices'),
+('CSS', 'CSS and styling patterns'),
+('Git', 'Git workflow and commit patterns')
+ON CONFLICT (name) DO NOTHING;
 
 -- Insert sample rules (these will be created by a system user)
 -- Note: In production, these would be created by actual users
@@ -48,17 +49,14 @@ When creating React components with TypeScript:
 - Implement proper error boundaries
 
 ## Props Interface
-```typescript
 interface ComponentProps {
   title: string;
   description?: string;
   children?: React.ReactNode;
   className?: string;
 }
-```
 
 ## Component Template
-```typescript
 import React from ''react'';
 
 interface ComponentProps {
@@ -82,7 +80,6 @@ export const Component: React.FC<ComponentProps> = ({
     </div>
   );
 };
-```
 
 ## Best Practices
 - Always use TypeScript interfaces for prop definitions
@@ -125,7 +122,6 @@ When creating API endpoints:
 - Return consistent response formats
 
 ## Error Handling Template
-```javascript
 const handleApiRequest = async (req, res) => {
   try {
     // Validate input
@@ -154,7 +150,6 @@ const handleApiRequest = async (req, res) => {
     });
   }
 };
-```
 
 ## Response Format
 - Always use consistent response structure
@@ -202,7 +197,6 @@ When writing tests with Jest:
 - Test both success and error cases
 
 ## Component Testing Template
-```javascript
 import { render, screen, fireEvent } from ''@testing-library/react'';
 import { Component } from ''./Component'';
 
@@ -234,7 +228,6 @@ describe(''Component'', () => {
     expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });
-```
 
 ## Best Practices
 - Test component behavior, not implementation
@@ -277,7 +270,6 @@ When working with databases:
 - Use connection pooling
 
 ## Query Template
-```javascript
 const getUserById = async (userId) => {
   try {
     // Validate input
@@ -300,7 +292,6 @@ const getUserById = async (userId) => {
     throw new Error(''Failed to fetch user'');
   }
 };
-```
 
 ## Connection Management
 - Use connection pooling
@@ -349,7 +340,6 @@ When writing TypeScript code:
 - Use union types for multiple possible values
 
 ## Interface Template
-```typescript
 interface User {
   id: string;
   email: string;
@@ -363,10 +353,8 @@ interface UserPreferences {
   notifications: boolean;
   language: string;
 }
-```
 
 ## Function Signatures
-```typescript
 // Good: Explicit return type
 function calculateTotal(items: CartItem[]): number {
   return items.reduce((sum, item) => sum + item.price, 0);
@@ -376,7 +364,6 @@ function calculateTotal(items: CartItem[]): number {
 function createArray<T>(length: number, value: T): T[] {
   return Array(length).fill(value);
 }
-```
 
 ## Best Practices
 - Use strict mode in tsconfig.json
@@ -419,7 +406,6 @@ When building web applications:
 - Sanitize data before rendering in templates
 
 ## Authentication Template
-```javascript
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split('' '')[1];
@@ -435,17 +421,14 @@ const authenticateUser = async (req, res, next) => {
     return res.status(401).json({ error: ''Invalid token'' });
   }
 };
-```
 
 ## Data Sanitization
-```javascript
 const sanitizeInput = (input) => {
   return input
     .replace(/[<>]/g, '''') // Remove HTML tags
     .trim()
     .toLowerCase();
 };
-```
 
 ## Security Headers
 - Set proper Content Security Policy
@@ -495,27 +478,23 @@ When optimizing application performance:
 - Lazy load components and routes
 
 ## Code Splitting Template
-```javascript
 // Lazy load components
-const LazyComponent = React.lazy(() => import('./ExpensiveComponent'));
+const LazyComponent = React.lazy(() => import(''./ExpensiveComponent''));
 
 // Lazy load routes
-const HomePage = React.lazy(() => import('./pages/HomePage'));
-const AboutPage = React.lazy(() => import('./pages/AboutPage'));
-```
+const HomePage = React.lazy(() => import(''./pages/HomePage''));
+const AboutPage = React.lazy(() => import(''./pages/AboutPage''));
 
 ## Database Optimization
-```javascript
 // Use indexes for frequently queried fields
 // Implement pagination for large datasets
 const getUsers = async (page = 1, limit = 20) => {
   const offset = (page - 1) * limit;
   return await db.query(
-    'SELECT * FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2',
+    ''SELECT * FROM users ORDER BY created_at DESC LIMIT $1 OFFSET $2'',
     [limit, offset]
   );
 };
-```
 
 ## Caching Strategies
 - Implement Redis for session storage

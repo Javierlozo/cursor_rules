@@ -149,7 +149,7 @@ export default function PublicProfilePage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
             <p className="mt-4 text-gray-400">Loading profile...</p>
@@ -180,7 +180,7 @@ export default function PublicProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+                <div className="max-w-6xl mx-auto">
         {/* Profile Header */}
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">

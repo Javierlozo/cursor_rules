@@ -15,8 +15,6 @@ export default function CursorRulesPage() {
   useEffect(() => {
     const fetchRules = async () => {
       try {
-        console.log("Fetching rules...");
-        
         // Try to use the enhanced view first, fall back to regular table
         let { data, error } = await supabase
           .from("cursor_rules_with_creator")
@@ -24,7 +22,6 @@ export default function CursorRulesPage() {
 
         // If view doesn't exist, use regular table
         if (error && error.code === '42P01') {
-          console.log("View not found, using regular table...");
           const result = await supabase
             .from("cursor_rules")
             .select("*");
@@ -32,15 +29,12 @@ export default function CursorRulesPage() {
           error = result.error;
         }
 
-        console.log("Supabase response:", { data, error });
-
         if (error) {
           console.error("Error fetching rules:", error);
           return;
         }
 
         const safeRules = data ?? [];
-        console.log("Setting rules:", safeRules);
         setRules(safeRules);
         setFilteredRules(safeRules);
       } catch (error) {
@@ -76,31 +70,33 @@ export default function CursorRulesPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-white">Cursor Rules</h1>
-        <a
-          href="/cursor-rules/create"
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-        >
-          Create New Rule
-        </a>
-      </div>
-
-      <div className="mb-6 max-w-2xl">
-        <SearchBar
-          onSearch={handleSearch}
-          placeholder="Search by name, description, or pattern..."
-        />
-      </div>
-
-      {isLoading ? (
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-400">Loading rules...</p>
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-white text-center">Cursor Rules</h1>
+          <a
+            href="/cursor-rules/create"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            Create New Rule
+          </a>
         </div>
-      ) : (
-        <CursorRulesList rules={filteredRules} />
-      )}
+
+        <div className="mb-6 max-w-2xl">
+          <SearchBar
+            onSearch={handleSearch}
+            placeholder="Search by name, description, or pattern..."
+          />
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-400">Loading rules...</p>
+          </div>
+        ) : (
+          <CursorRulesList rules={filteredRules} />
+        )}
+      </div>
     </main>
   );
 }

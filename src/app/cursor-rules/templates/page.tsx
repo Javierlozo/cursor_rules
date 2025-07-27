@@ -285,7 +285,7 @@ export default function TemplatesPage() {
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Rule Templates</h1>
+          <h1 className="text-4xl font-bold text-white mb-8 text-center">Rule Templates</h1>
           <p className="text-xl text-gray-400 mb-8">
             Get started quickly with these pre-built rule templates, or create your own from scratch
           </p>
@@ -322,16 +322,16 @@ export default function TemplatesPage() {
                     {template.description}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                    <span className="inline-block bg-blue-900/50 text-blue-300 text-xs px-2 py-1 rounded border border-blue-700/30">
                       {template.category}
                     </span>
-                    <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                    <span className="inline-block bg-green-900/50 text-green-300 text-xs px-2 py-1 rounded border border-green-700/30">
                       {template.framework}
                     </span>
-                    <span className={`inline-block text-xs px-2 py-1 rounded ${
-                      template.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
-                      template.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
+                    <span className={`inline-block text-xs px-2 py-1 rounded border ${
+                      template.difficulty === 'Beginner' ? 'bg-green-900/50 text-green-300 border-green-700/30' :
+                      template.difficulty === 'Intermediate' ? 'bg-yellow-900/50 text-yellow-300 border-yellow-700/30' :
+                      'bg-red-900/50 text-red-300 border-red-700/30'
                     }`}>
                       {template.difficulty}
                     </span>
@@ -370,7 +370,7 @@ export default function TemplatesPage() {
         </div>
 
         <div className="mt-16 text-center">
-          <h2 className="text-2xl font-semibold mb-4">Ready to Contribute?</h2>
+          <h2 className="text-2xl font-semibold mb-6 text-white">Ready to Contribute?</h2>
           <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
             These templates are just starting points. The real power comes from the community sharing their own 
             specialized rules and patterns. Create rules that reflect your team&apos;s unique coding standards!
@@ -378,13 +378,13 @@ export default function TemplatesPage() {
           <div className="flex gap-4 justify-center">
             <a
               href="/cursor-rules/create"
-              className="bg-green-500 text-white px-8 py-4 rounded-lg hover:bg-green-600 transition font-medium"
+              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium"
             >
               Create Your Own Rule
             </a>
             <a
               href="/guidelines"
-              className="bg-gray-700 text-white px-8 py-4 rounded-lg hover:bg-gray-600 transition font-medium"
+              className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium"
             >
               Read Guidelines
             </a>

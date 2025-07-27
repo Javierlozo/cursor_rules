@@ -92,7 +92,6 @@ function CreateRuleForm() {
       }
 
       setSuccess(true);
-      console.log("Rule created successfully:", data.name);
       
       // Redirect after a short delay to show success message
       setTimeout(() => {
@@ -142,8 +141,8 @@ function CreateRuleForm() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Create New Cursor Rule</h1>
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold text-white mb-8 text-center">Create New Cursor Rule</h1>
         
         {/* Error Message */}
         {error && (
@@ -422,7 +421,7 @@ export default function CreateRulePage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
             <p className="mt-4 text-gray-400">Loading...</p>
@@ -499,7 +498,7 @@ export default function CreateRulePage() {
   return (
     <Suspense fallback={
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-700 rounded mb-8"></div>
             <div className="space-y-6">

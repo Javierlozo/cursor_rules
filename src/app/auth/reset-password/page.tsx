@@ -28,15 +28,6 @@ function ResetPasswordForm() {
     const token = urlParams.get('token');
     const type = urlParams.get('type');
     
-    console.log('Reset password URL params:', { 
-      accessToken: !!accessToken, 
-      refreshToken: !!refreshToken,
-      token: !!token,
-      type,
-      hash: window.location.hash,
-      allParams: Object.fromEntries(urlParams.entries())
-    });
-    
     if (!accessToken && !token) {
       setError("This page is for password reset links only. Please check your email for the reset link or request a new password reset.");
     } else if (token) {

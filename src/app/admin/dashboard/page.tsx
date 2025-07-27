@@ -61,8 +61,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (user) {
-      console.log("Current user:", user.email);
-      console.log("User metadata:", user.user_metadata);
+      
       fetchUsers();
       fetchStats();
     }
@@ -91,7 +90,6 @@ export default function AdminDashboard() {
       }
 
       const data = await res.json();
-      console.log("API response:", data);
       
       // Enhance users with profile and stats data
       const enhancedUsers = await Promise.all(
@@ -107,7 +105,6 @@ export default function AdminDashboard() {
                 .single();
               profile = profileData;
             } catch (error) {
-              console.log(`No profile found for user ${user.id}:`, error);
               profile = null;
             }
 
@@ -118,7 +115,6 @@ export default function AdminDashboard() {
                 .rpc("get_user_stats", { user_uuid: user.id });
               statsData = statsResult;
             } catch (error) {
-              console.log(`No stats found for user ${user.id}:`, error);
               statsData = null;
             }
 
@@ -454,7 +450,7 @@ export default function AdminDashboard() {
           <h2 className="text-xl font-semibold mb-4">User Management</h2>
           
           {loadingUsers ? (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
               <p className="mt-2 text-gray-400">Loading users...</p>
             </div>
