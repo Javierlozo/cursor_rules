@@ -37,6 +37,7 @@ export default function EditRulePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [ruleLoaded, setRuleLoaded] = useState(false);
 
   const fetchRule = useCallback(async () => {
     try {
@@ -45,7 +46,7 @@ export default function EditRulePage() {
         .select("*")
         .eq("id", ruleId)
         .eq("created_by", user?.id) // Security: only fetch user's own rules
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching rule:", error);
@@ -54,6 +55,7 @@ export default function EditRulePage() {
       }
 
       if (data) {
+        console.log("Rule found:", data.name);
         setFormData({
           name: data.name,
           description: data.description || "",
@@ -64,6 +66,11 @@ export default function EditRulePage() {
           framework: data.framework || "",
           file_references: data.file_references || [],
         });
+        setRuleLoaded(true);
+      } else {
+        console.log("Rule not found for ID:", ruleId);
+        setError("Rule not found or you don't have permission to edit it");
+        setRuleLoaded(false);
       }
     } catch {
       console.error("Error loading rule");
@@ -84,10 +91,34 @@ export default function EditRulePage() {
     }
   }, [user, loading, ruleId, fetchRule, router]);
 
+  // Refresh rule data when returning to the page
+  useEffect(() => {
+    if (user && ruleId) {
+      fetchRule();
+    }
+  }, [user, ruleId, fetchRule]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submitted. ruleLoaded:", ruleLoaded, "formData:", formData);
+    
+    // Immediately return if rule is not loaded
+    if (!ruleLoaded) {
+      console.log("Rule not loaded, preventing submission");
+      setError("Rule not found or you don't have permission to edit it");
+      return;
+    }
+    
     setIsSubmitting(true);
     setError("");
+
+    // Check if we have valid form data
+    if (!formData.name || !formData.rule_content) {
+      console.log("Form data invalid, preventing submission");
+      setError("Please fill in all required fields");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       // Get the current session token
@@ -187,6 +218,8 @@ export default function EditRulePage() {
     );
   }
 
+  console.log("Rendering page. ruleLoaded:", ruleLoaded, "error:", error, "isLoading:", isLoading);
+  
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
@@ -206,7 +239,24 @@ export default function EditRulePage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {!ruleLoaded || error ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400 mb-6">
+              {error || "Rule not found or you don't have permission to edit it."}
+            </p>
+            <button
+              onClick={() => router.push('/cursor-rules/my-rules')}
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
+            >
+              Back to My Rules
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6" onKeyDown={(e) => {
+            if (e.key === 'Enter' && !ruleLoaded) {
+              e.preventDefault();
+            }
+          }}>
           {/* Basic Information */}
           <div className="grid gap-6 md:grid-cols-2">
             <div>
@@ -350,7 +400,7 @@ export default function EditRulePage() {
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !ruleLoaded}
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? "Updating..." : "Update Rule"}
@@ -364,6 +414,7 @@ export default function EditRulePage() {
             </button>
           </div>
         </form>
+        )}
       </div>
     </main>
   );

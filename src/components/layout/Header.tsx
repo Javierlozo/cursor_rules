@@ -144,8 +144,7 @@ export default function Header() {
             href="/"
             className="text-xl font-bold flex items-center gap-2 text-white"
           >
-            <FiDownload className="w-6 h-6" />
-            Cursor Rules
+            Cursor Rules Hub
           </Link>
 
           {/* Desktop Navigation */}

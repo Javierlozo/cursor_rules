@@ -46,6 +46,25 @@ export default function MyRulesPage() {
     }
   }, [user, loading, fetchMyRules, router]);
 
+  // Refresh data when the page becomes visible (e.g., after returning from edit)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        fetchMyRules();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [user, fetchMyRules]);
+
+  // Refresh data when navigating back to this page
+  useEffect(() => {
+    if (user) {
+      fetchMyRules();
+    }
+  }, [user]);
+
   const copyRuleContent = async (id: string, content: string) => {
     try {
       await navigator.clipboard.writeText(content);

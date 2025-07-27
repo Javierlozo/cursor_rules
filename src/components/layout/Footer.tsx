@@ -9,7 +9,7 @@ export default function Footer() {
           {/* About Section */}
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
             <h3 className="font-semibold mb-3 text-white">
-              About Cursor Rules
+              About Cursor Rules Hub
             </h3>
             <p className="text-gray-400 text-sm">
               A community-driven collection of AI behavior rules for the Cursor
