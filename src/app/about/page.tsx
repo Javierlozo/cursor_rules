@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AboutPage() {
   return (
     <main className="container mx-auto px-4 py-8">
@@ -23,7 +25,7 @@ export default function AboutPage() {
               </p>
               <p className="text-lg text-gray-300">
                 Think of them as <strong className="text-blue-400">persistent context, preferences, or workflows</strong> for your projects - 
-                they're included at the start of the model context to provide consistent guidance.
+                they&apos;re included at the start of the model context to provide consistent guidance.
               </p>
             </div>
             <div className="bg-blue-900/20 p-8 rounded-xl border border-blue-700/30">
@@ -44,7 +46,7 @@ export default function AboutPage() {
               <div className="text-3xl mb-4">🚀</div>
               <h3 className="text-xl font-semibold mb-3 text-blue-300">Boost Productivity</h3>
               <p className="text-gray-300">
-                Generate code that matches your team's patterns instantly. No more rewriting AI suggestions 
+                Generate code that matches your team&apos;s patterns instantly. No more rewriting AI suggestions 
                 to match your coding standards.
               </p>
             </div>
@@ -60,7 +62,7 @@ export default function AboutPage() {
               <div className="text-3xl mb-4">🧠</div>
               <h3 className="text-xl font-semibold mb-3 text-purple-300">Learn Best Practices</h3>
               <p className="text-gray-300">
-                Share and discover proven patterns from experienced developers. Learn from the community's 
+                Share and discover proven patterns from experienced developers. Learn from the community&apos;s 
                 collective knowledge.
               </p>
             </div>
@@ -68,7 +70,7 @@ export default function AboutPage() {
               <div className="text-3xl mb-4">⚡</div>
               <h3 className="text-xl font-semibold mb-3 text-orange-300">Faster Onboarding</h3>
               <p className="text-gray-300">
-                New team members can instantly adopt your project's conventions by using the same rules. 
+                New team members can instantly adopt your project&apos;s conventions by using the same rules. 
                 Reduce ramp-up time significantly.
               </p>
             </div>
@@ -172,7 +174,7 @@ export default function AboutPage() {
               <div className="bg-gray-900 p-4 rounded-lg border border-gray-600">
                 <code className="text-sm text-gray-200">
                   <div className="mb-2"><span className="text-blue-300">description:</span> RPC Service boilerplate</div>
-                  <div className="mb-2"><span className="text-blue-300">globs:</span> <span className="font-mono">["**/*.ts"]</span></div>
+                  <div className="mb-2"><span className="text-blue-300">globs:</span> <span className="font-mono">[&quot;**/*.ts&quot;]</span></div>
                   <div className="mb-2"><span className="text-blue-300">alwaysApply:</span> false</div>
                   <div className="text-gray-400 mt-3">Referenced: @service-template.ts</div>
                 </code>
@@ -204,18 +206,18 @@ export default function AboutPage() {
                 your team follows and the patterns you want to enforce.
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
-                <a
+                <Link
                   href="/cursor-rules/create"
                   className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium"
                 >
                   Create Your First Rule
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/cursor-rules"
                   className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium border border-gray-600"
                 >
                   Browse Community Rules
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -318,8 +320,8 @@ export default function AboutPage() {
             <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-xl border border-gray-700">
               <h3 className="text-xl font-semibold mb-4 text-blue-300">About Me</h3>
               <p className="text-gray-300 mb-6 leading-relaxed">
-                I'm a Senior Full Stack Engineer with extensive experience in building secure, high-performance web applications for businesses of all sizes. 
-                Leveraging modern frameworks like React, Next.js, and AWS, I focus on creating user-friendly solutions that help companies thrive in today's digital landscape.
+                I&apos;m a Senior Full Stack Engineer with extensive experience in building secure, high-performance web applications for businesses of all sizes. 
+                Leveraging modern frameworks like React, Next.js, and AWS, I focus on creating user-friendly solutions that help companies thrive in today&apos;s digital landscape.
               </p>
               <p className="text-gray-300 mb-6 leading-relaxed">
                 With a passion for full-stack development, I strive to implement impactful, transformative technologies and best practices that drive real-world results.
@@ -375,18 +377,18 @@ export default function AboutPage() {
             Start sharing your knowledge and help build the best Cursor rules community!
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a
+            <Link
               href="/cursor-rules/create"
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium"
             >
               Create Your First Rule
-            </a>
-            <a
+            </Link>
+            <Link
               href="/cursor-rules"
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium"
             >
               Browse Community Rules
-            </a>
+            </Link>
           </div>
         </section>
       </div>

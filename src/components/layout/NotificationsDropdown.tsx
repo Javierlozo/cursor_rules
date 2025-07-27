@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { Notification } from "@/lib/types/notification";
-import { FiBell, FiUsers, FiDownload, FiHeart, FiMessageSquare, FiAtSign, FiSettings, FiCheck } from "react-icons/fi";
+import { FiBell, FiUsers, FiHeart, FiMessageSquare, FiAtSign, FiSettings, FiCheck } from "react-icons/fi";
 import Link from "next/link";
 
 interface NotificationsDropdownProps {
@@ -136,7 +136,7 @@ export default function NotificationsDropdown({ isOpen, onClose }: Notifications
       case 'like':
         return <FiHeart className="w-4 h-4 text-red-400" />;
       case 'download':
-        return <FiDownload className="w-4 h-4 text-green-400" />;
+        return <FiMessageSquare className="w-4 h-4 text-green-400" />;
       case 'comment':
         return <FiMessageSquare className="w-4 h-4 text-purple-400" />;
       case 'mention':

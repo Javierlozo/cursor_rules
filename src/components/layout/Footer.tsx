@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiGithub, FiTwitter, FiMail, FiDownload, FiMessageSquare } from "react-icons/fi";
+import { FiGithub, FiMessageSquare } from "react-icons/fi";
 
 export default function Footer() {
   return (
@@ -53,7 +53,7 @@ export default function Footer() {
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-blue-400 inline-flex items-center gap-2"
                 >
-                  <FiDownload className="w-4 h-4" />
+                  <FiMessageSquare className="w-4 h-4" />
                   Download Cursor
                 </a>
               </li>

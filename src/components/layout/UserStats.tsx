@@ -6,15 +6,14 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface UserStats {
   rulesCount: number;
-  likesCount: number;
+
 }
 
 export default function UserStats() {
   const { user } = useAuth();
-  const [stats, setStats] = useState<UserStats>({
-    rulesCount: 0,
-    likesCount: 0,
-  });
+      const [stats, setStats] = useState<UserStats>({
+      rulesCount: 0,
+    });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,17 +37,15 @@ export default function UserStats() {
       }
 
       // For now, just show rules count since downloads/likes tables might not exist
-      setStats({
-        rulesCount: rulesCount || 0,
-        likesCount: 0, // Will be implemented when likes table is ready
-      });
+              setStats({
+          rulesCount: rulesCount || 0,
+        });
     } catch (error) {
       console.error("Error fetching user stats:", error);
       // Set default values on error
-      setStats({
-        rulesCount: 0,
-        likesCount: 0,
-      });
+              setStats({
+          rulesCount: 0,
+        });
     } finally {
       setLoading(false);
     }
@@ -84,15 +81,12 @@ export default function UserStats() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 text-center">
+    <div className="grid grid-cols-1 gap-4 text-center">
       <div>
         <p className="text-2xl font-bold text-blue-400">{stats.rulesCount}</p>
         <p className="text-xs text-gray-400">Rules</p>
       </div>
-      <div>
-        <p className="text-2xl font-bold text-purple-400">{stats.likesCount}</p>
-        <p className="text-xs text-gray-400">Likes</p>
-      </div>
+      
     </div>
   );
 } 

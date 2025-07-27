@@ -7,25 +7,20 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import UserStats from "./UserStats";
 import NotificationsDropdown from "./NotificationsDropdown";
+import FollowersPreview from "./FollowersPreview";
+import UserProfileLink from "./UserProfileLink";
 import {
-  FiHome,
   FiPlus,
   FiList,
   FiBook,
-  FiGithub,
   FiMenu,
   FiX,
-  FiDownload,
   FiFileText,
   FiUser,
-  FiUsers,
   FiLogOut,
   FiChevronDown,
   FiSettings,
   FiEdit,
-  FiHeart,
-  FiClock,
-  FiStar,
   FiShield,
   FiBell,
   FiMessageSquare,
@@ -245,6 +240,15 @@ export default function Header() {
                       {/* User Stats */}
                       <div className="p-4 border-b border-gray-700">
                         <UserStats />
+                      </div>
+                      
+                      {/* Followers Section */}
+                      <div className="p-4 border-b border-gray-700">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-sm font-medium text-gray-300">Followers</h3>
+                          <UserProfileLink onClose={() => setIsUserDropdownOpen(false)} />
+                        </div>
+                        <FollowersPreview />
                       </div>
                       
                       {/* User Actions */}

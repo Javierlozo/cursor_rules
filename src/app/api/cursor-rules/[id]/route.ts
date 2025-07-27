@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
@@ -72,7 +72,7 @@ export async function DELETE(
     const user = await authenticateRequest(request);
     const { id: ruleId } = await params;
 
-    const existingRule = await checkRuleOwnership(ruleId, user.id);
+    await checkRuleOwnership(ruleId, user.id);
 
     const { error } = await supabase
       .from("cursor_rules")

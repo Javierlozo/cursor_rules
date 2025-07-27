@@ -252,6 +252,8 @@ const getUserById = async (userId) => {
   }
 ];
 
+import Link from "next/link";
+
 export default function TemplatesPage() {
   const router = useRouter();
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -290,20 +292,20 @@ export default function TemplatesPage() {
             Get started quickly with these pre-built rule templates, or create your own from scratch
           </p>
           <div className="flex gap-4 justify-center">
-            <a
+            <Link
               href="/cursor-rules/create"
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium flex items-center gap-2"
             >
               <FiPlus className="w-5 h-5" />
               Create Custom Rule
-            </a>
-            <a
+            </Link>
+            <Link
               href="/cursor-rules"
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium flex items-center gap-2"
             >
               <FiUsers className="w-5 h-5" />
               Browse Community Rules
-            </a>
+            </Link>
           </div>
         </div>
 
@@ -376,18 +378,18 @@ export default function TemplatesPage() {
             specialized rules and patterns. Create rules that reflect your team&apos;s unique coding standards!
           </p>
           <div className="flex gap-4 justify-center">
-            <a
+            <Link
               href="/cursor-rules/create"
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium"
             >
               Create Your Own Rule
-            </a>
-            <a
+            </Link>
+            <Link
               href="/guidelines"
               className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium"
             >
               Read Guidelines
-            </a>
+            </Link>
           </div>
         </div>
       </div>

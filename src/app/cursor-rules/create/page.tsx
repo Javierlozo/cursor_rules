@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { CreateRuleData } from "@/lib/types/cursor-rule";
-import { FiSave, FiX, FiPlus, FiTrash2, FiAlertCircle, FiCheck, FiUser, FiDownload, FiStar } from "react-icons/fi";
+import { FiSave, FiX, FiPlus, FiAlertCircle, FiCheck, FiUser, FiStar } from "react-icons/fi";
 import Link from "next/link";
 
 function CreateRuleForm() {
@@ -476,7 +476,7 @@ export default function CreateRulePage() {
                   </div>
                   <div className="text-center">
                     <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <FiDownload className="w-4 h-4 text-white" />
+                                              <FiStar className="w-4 h-4 text-white" />
                     </div>
                     <p>Help other developers</p>
                   </div>

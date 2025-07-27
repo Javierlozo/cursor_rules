@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FiMail, FiAlertTriangle, FiStar, FiMessageSquare, FiSend, FiCheck } from "react-icons/fi";
+import { FiAlertTriangle, FiStar, FiMessageSquare, FiSend, FiCheck } from "react-icons/fi";
 
 export default function FeedbackPage() {
   const [feedbackType, setFeedbackType] = useState<"bug" | "feature" | "general">("general");

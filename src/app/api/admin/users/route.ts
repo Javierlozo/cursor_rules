@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Return user list with basic info
-    const userList = users.map((u: any) => ({
+    const userList = users.map((u: { id: string; email?: string; user_metadata?: { username?: string; role?: string }; created_at: string; last_sign_in_at?: string; email_confirmed_at?: string }) => ({
       id: u.id,
       email: u.email,
       username: u.user_metadata?.username || null,

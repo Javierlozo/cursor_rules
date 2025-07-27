@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { FiUsers, FiTrash2, FiMail, FiShield, FiActivity, FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiHeart, FiEye, FiEdit, FiX } from "react-icons/fi";
+import { FiUsers, FiTrash2, FiShield, FiActivity, FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiEye, FiEdit, FiX } from "react-icons/fi";
 import Link from "next/link";
 
 interface User {
@@ -25,7 +25,7 @@ interface User {
   };
   stats?: {
     total_rules: number;
-    total_likes: number;
+  
     followers_count: number;
     following_count: number;
   };
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
         <div className="max-w-2xl mx-auto text-center">
           <h1 className="text-3xl font-bold mb-4">Access Denied</h1>
           <p className="text-gray-400 mb-6">
-            You don't have permission to access admin functions.
+                            You don&apos;t have permission to access admin functions.
           </p>
         </div>
       </main>
@@ -502,10 +502,7 @@ export default function AdminDashboard() {
                       </td>
                       <td className="p-3">
                         <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-xs">
-                            <FiHeart className="w-3 h-3 text-red-400" />
-                            <span>{user.stats?.total_likes || 0}</span>
-                          </div>
+
                           <div className="flex items-center gap-2 text-xs text-gray-400">
                             <span>Rules: {user.stats?.total_rules || 0}</span>
                             <span>•</span>
@@ -655,15 +652,10 @@ export default function AdminDashboard() {
                 {selectedUser.stats && (
                   <div>
                     <h4 className="text-lg font-medium mb-3">User Statistics</h4>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
                       <div className="text-center p-3 bg-gray-700 rounded">
                         <p className="text-2xl font-bold text-blue-400">{selectedUser.stats.total_rules}</p>
                         <p className="text-xs text-gray-400">Rules</p>
-                      </div>
-
-                      <div className="text-center p-3 bg-gray-700 rounded">
-                        <p className="text-2xl font-bold text-red-400">{selectedUser.stats.total_likes}</p>
-                        <p className="text-xs text-gray-400">Likes</p>
                       </div>
                       <div className="text-center p-3 bg-gray-700 rounded">
                         <p className="text-2xl font-bold text-purple-400">{selectedUser.stats.followers_count}</p>

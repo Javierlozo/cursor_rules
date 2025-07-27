@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    const activeUsers = users.filter((u: any) => 
+    const activeUsers = users.filter((u: { last_sign_in_at?: string }) => 
       u.last_sign_in_at && new Date(u.last_sign_in_at) > thirtyDaysAgo
     ).length;
 

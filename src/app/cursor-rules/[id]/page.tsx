@@ -215,10 +215,7 @@ export default function CursorRuleDetailPage() {
             <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Statistics</h3>
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Likes</span>
-                  <span className="text-white font-medium">{rule.likes || 0}</span>
-                </div>
+
                 <div className="flex justify-between">
                   <span className="text-gray-400">Created</span>
                   <span className="text-white font-medium">

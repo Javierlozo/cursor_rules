@@ -6,8 +6,9 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
 import { CursorRule } from "@/lib/types/cursor-rule";
 import { PublicUserProfile } from "@/lib/types/user-profile";
-import { FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiDownload, FiHeart, FiUsers, FiStar, FiPlus, FiEdit } from "react-icons/fi";
+import { FiUser, FiMapPin, FiGlobe, FiGithub, FiTwitter, FiUsers, FiStar, FiEdit } from "react-icons/fi";
 import Link from "next/link";
+import FollowersModal from "@/components/FollowersModal";
 
 export default function PublicProfilePage() {
   const params = useParams();
@@ -17,6 +18,8 @@ export default function PublicProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isUpdatingFollow, setIsUpdatingFollow] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"followers" | "following">("followers");
 
   const username = params.username as string;
 
@@ -52,14 +55,21 @@ export default function PublicProfilePage() {
       // Check if current user is following this profile
       let isFollowingStatus = false;
       if (user) {
-        const { data: followData } = await supabase
-          .from("user_follows")
-          .select("id")
-          .eq("follower_id", user.id)
-          .eq("following_id", profileData.user_id)
-          .single();
+        try {
+          const { data: followData, error: followError } = await supabase
+            .from("user_follows")
+            .select("id")
+            .eq("follower_id", user.id)
+            .eq("following_id", profileData.user_id)
+            .single();
 
-        isFollowingStatus = !!followData;
+          // If no error and data exists, user is following
+          isFollowingStatus = !followError && !!followData;
+        } catch (error) {
+          // If there's an error (like 406), assume not following
+          console.warn("Could not check follow status:", error);
+          isFollowingStatus = false;
+        }
       }
 
       // Fetch user's rules
@@ -277,23 +287,33 @@ export default function PublicProfilePage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
             <div className="text-2xl font-bold text-blue-400">{profile.stats.total_rules}</div>
             <div className="text-sm text-gray-400">Rules</div>
           </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
-            <div className="text-2xl font-bold text-red-400">{profile.stats.total_likes}</div>
-            <div className="text-sm text-gray-400">Likes</div>
-          </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
+
+          <button
+            onClick={() => {
+              setModalType("followers");
+              setModalOpen(true);
+            }}
+            className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center hover:bg-gray-700 transition cursor-pointer"
+          >
             <div className="text-2xl font-bold text-purple-400">{profile.stats.followers_count}</div>
             <div className="text-sm text-gray-400">Followers</div>
-          </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center">
+          </button>
+
+          <button
+            onClick={() => {
+              setModalType("following");
+              setModalOpen(true);
+            }}
+            className="bg-gray-800 border border-gray-700 rounded-xl p-4 text-center hover:bg-gray-700 transition cursor-pointer"
+          >
             <div className="text-2xl font-bold text-orange-400">{profile.stats.following_count}</div>
             <div className="text-sm text-gray-400">Following</div>
-          </div>
+          </button>
         </div>
 
         {/* Rules Section */}
@@ -328,10 +348,7 @@ export default function PublicProfilePage() {
                         {rule.description}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                      <FiHeart className="w-4 h-4" />
-                      <span>{rule.likes || 0}</span>
-                    </div>
+
                   </div>
                   
                   <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
@@ -357,6 +374,17 @@ export default function PublicProfilePage() {
           )}
         </div>
       </div>
+
+      {/* Followers/Following Modal */}
+      {profile && (
+        <FollowersModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          userId={profile.user_id}
+          type={modalType}
+          count={modalType === "followers" ? profile.stats.followers_count : profile.stats.following_count}
+        />
+      )}
     </div>
   );
 } 

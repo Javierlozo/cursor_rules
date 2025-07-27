@@ -6,6 +6,8 @@ import SearchBar from "@/components/cursor-rules/SearchBar";
 import { supabase } from "@/lib/supabase";
 import { CursorRule } from "@/lib/types/cursor-rule";
 
+import Link from "next/link";
+
 export default function CursorRulesPage() {
   const [rules, setRules] = useState<CursorRule[]>([]);
   const [filteredRules, setFilteredRules] = useState<CursorRule[]>([]);
@@ -73,12 +75,12 @@ export default function CursorRulesPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-white text-center">Cursor Rules</h1>
-          <a
+          <Link
             href="/cursor-rules/create"
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
           >
             Create New Rule
-          </a>
+          </Link>
         </div>
 
         <div className="mb-6 max-w-2xl">

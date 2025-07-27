@@ -65,7 +65,7 @@ export default function ProfilePage() {
       const { data: profileData, error: profileError } = await supabase
         .from("user_profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("user_id", user.id)
         .single();
 
       if (profileError && profileError.code !== "PGRST116") {
@@ -146,6 +146,42 @@ export default function ProfilePage() {
     checkUsernameAvailability(newUsername, profileData.username);
   };
 
+  // Helper functions for URL formatting
+  const formatWebsite = (url: string) => {
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+    return `https://${url}`;
+  };
+
+  const formatGithubUsername = (username: string) => {
+    if (!username) return "";
+    // Remove @ symbol if present
+    return username.replace(/^@/, "");
+  };
+
+  const formatTwitterUsername = (username: string) => {
+    if (!username) return "";
+    // Remove @ symbol if present
+    return username.replace(/^@/, "");
+  };
+
+  const handleWebsiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setProfileData({ ...profileData, website: value });
+  };
+
+  const handleGithubChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = formatGithubUsername(e.target.value);
+    setProfileData({ ...profileData, github_username: value });
+  };
+
+  const handleTwitterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = formatTwitterUsername(e.target.value);
+    setProfileData({ ...profileData, twitter_username: value });
+  };
+
   const updatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
@@ -187,11 +223,12 @@ export default function ProfilePage() {
       const { error } = await supabase
         .from("user_profiles")
         .upsert({
+          id: profileData.id, // Include the id for proper upsert
           user_id: user?.id,
           username: profileData.username,
           display_name: profileData.display_name,
           bio: profileData.bio,
-          website: profileData.website,
+          website: formatWebsite(profileData.website || ""),
           github_username: profileData.github_username,
           twitter_username: profileData.twitter_username,
           location: profileData.location,
@@ -470,9 +507,9 @@ export default function ProfilePage() {
                         type="url"
                         id="website"
                         value={profileData.website}
-                        onChange={(e) => setProfileData({ ...profileData, website: e.target.value })}
+                        onChange={handleWebsiteChange}
                         className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="https://example.com"
+                        placeholder="example.com or https://example.com"
                       />
                     </div>
 
@@ -498,9 +535,9 @@ export default function ProfilePage() {
                         type="text"
                         id="github_username"
                         value={profileData.github_username}
-                        onChange={(e) => setProfileData({ ...profileData, github_username: e.target.value })}
+                        onChange={handleGithubChange}
                         className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="your-github-username"
+                        placeholder="username (without @)"
                       />
                     </div>
 
@@ -512,9 +549,9 @@ export default function ProfilePage() {
                         type="text"
                         id="twitter_username"
                         value={profileData.twitter_username}
-                        onChange={(e) => setProfileData({ ...profileData, twitter_username: e.target.value })}
+                        onChange={handleTwitterChange}
                         className="w-full p-3 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="your-twitter-username"
+                        placeholder="username (without @)"
                       />
                     </div>
                   </div>

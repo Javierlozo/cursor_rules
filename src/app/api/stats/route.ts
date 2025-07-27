@@ -9,11 +9,6 @@ export async function GET() {
       .select("*", { count: "exact", head: true })
       .not("created_by", "is", null);
 
-    // Get total likes
-    const { data: likesData } = await supabase
-      .from("rule_likes")
-      .select("id");
-
     // Get unique contributors (users who created rules)
     const { data: contributorsData } = await supabase
       .from("cursor_rules")
@@ -28,7 +23,6 @@ export async function GET() {
       .not("created_by", "is", null);
 
     // Calculate statistics
-    const totalLikes = likesData?.length || 0;
     const uniqueContributors = new Set(contributorsData?.map(r => r.created_by) || []).size;
 
     // Calculate top categories
@@ -54,7 +48,6 @@ export async function GET() {
 
     return NextResponse.json({
       totalRules: totalRules || 0,
-      totalLikes,
       uniqueContributors,
       topCategories,
       recentRules: recentRules || []

@@ -17,6 +17,8 @@ const FRAMEWORKS = [
   "Laravel", "Ruby on Rails", "Spring", "ASP.NET"
 ];
 
+import Link from "next/link";
+
 export default function EditRulePage() {
   const router = useRouter();
   const params = useParams();

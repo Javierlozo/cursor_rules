@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { FiBell, FiCheck, FiHeart, FiDownload, FiUserPlus, FiMessageSquare } from "react-icons/fi";
+import { FiBell, FiCheck, FiHeart, FiUserPlus, FiMessageSquare } from "react-icons/fi";
 import Link from "next/link";
 
 interface Notification {
@@ -108,8 +108,8 @@ export default function NotificationsPage() {
     switch (type) {
       case 'rule_like':
         return <FiHeart className="w-4 h-4 text-red-400" />;
-      case 'rule_download':
-        return <FiDownload className="w-4 h-4 text-green-400" />;
+              case 'rule_download':
+          return <FiMessageSquare className="w-4 h-4 text-green-400" />;
       case 'new_follower':
         return <FiUserPlus className="w-4 h-4 text-blue-400" />;
       case 'comment':

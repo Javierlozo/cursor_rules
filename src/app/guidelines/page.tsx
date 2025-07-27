@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function GuidelinesPage() {
   return (
     <main className="container mx-auto px-4 py-8">
@@ -163,12 +165,12 @@ export default function GuidelinesPage() {
               </p>
             </div>
             <div className="mt-6 flex gap-4 flex-wrap">
-              <a
+              <Link
                 href="/cursor-rules/templates"
                 className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               >
                 Browse Templates
-              </a>
+              </Link>
               <a
                 href="https://docs.cursor.sh"
                 target="_blank"
@@ -188,18 +190,18 @@ export default function GuidelinesPage() {
             Start sharing your knowledge and help build the best Cursor rules community!
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <a
+            <Link
               href="/cursor-rules/create"
               className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition"
             >
               Create Your First Rule
-            </a>
-            <a
+            </Link>
+            <Link
               href="/cursor-rules"
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition"
             >
               Browse Community Rules
-            </a>
+            </Link>
           </div>
         </section>
       </div>
