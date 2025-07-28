@@ -63,33 +63,55 @@ function CreateRuleForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("🚀 Form submitted, starting rule creation...");
     setIsSubmitting(true);
     setError(null);
     setSuccess(false);
 
     if (!user) {
+      console.log("❌ No user found");
       setError("You must be logged in to create a rule");
       setIsSubmitting(false);
       return;
     }
 
     try {
-      const ruleData = {
-        ...formData,
-        created_by: user.id, // Explicitly set the created_by field
-      };
-
-      const { data, error } = await supabase
-        .from("cursor_rules")
-        .insert([ruleData])
-        .select()
-        .single();
-
-      if (error) {
-        console.error("Error creating rule:", error);
-        setError(error.message || "Failed to create rule");
+      console.log("🔑 Getting session token...");
+      // Get the current session token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        console.log("❌ No session token available");
+        setError("No session token available");
+        setIsSubmitting(false);
         return;
       }
+
+      console.log("📤 Sending request to API...");
+      console.log("📋 Form data:", formData);
+      
+      // Use the API route instead of direct Supabase call
+      const response = await fetch('/api/cursor-rules', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response ok:", response.ok);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("❌ Error creating rule:", errorData);
+        setError(errorData.error || "Failed to create rule");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("✅ Rule created successfully:", data);
 
       setSuccess(true);
       
@@ -98,7 +120,7 @@ function CreateRuleForm() {
         router.push("/cursor-rules");
       }, 1500);
     } catch (error) {
-      console.error("Error creating rule:", error);
+      console.error("❌ Error creating rule:", error);
       setError("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);

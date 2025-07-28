@@ -10,9 +10,10 @@ import Link from "next/link";
 interface NotificationsDropdownProps {
   isOpen: boolean;
   onClose: () => void;
+  onNotificationUpdate?: () => void;
 }
 
-export default function NotificationsDropdown({ isOpen, onClose }: NotificationsDropdownProps) {
+export default function NotificationsDropdown({ isOpen, onClose, onNotificationUpdate }: NotificationsDropdownProps) {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -100,6 +101,7 @@ export default function NotificationsDropdown({ isOpen, onClose }: Notifications
           )
         );
         setUnreadCount(prev => Math.max(0, prev - 1));
+        onNotificationUpdate?.(); // Refresh header count
       } else {
         console.warn("Error marking notification as read:", error);
       }
@@ -121,6 +123,7 @@ export default function NotificationsDropdown({ isOpen, onClose }: Notifications
       if (!error) {
         setNotifications(prev => prev.map(notif => ({ ...notif, is_read: true })));
         setUnreadCount(0);
+        onNotificationUpdate?.(); // Refresh header count
       } else {
         console.warn("Error marking all notifications as read:", error);
       }
@@ -154,7 +157,8 @@ export default function NotificationsDropdown({ isOpen, onClose }: Notifications
         return `/profile/${notification.data?.follower_username}`;
       case 'like':
       case 'download':
-        return `/cursor-rules/${notification.data?.rule_id}`;
+      case 'system':
+        return notification.data?.rule_id ? `/cursor-rules/${notification.data.rule_id}` : '#';
       default:
         return '#';
     }

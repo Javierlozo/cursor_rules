@@ -127,8 +127,6 @@ export function prepareRuleData(body: CreateRuleData, isUpdate: boolean = false)
     // For creation
     return {
       ...baseData,
-      downloads: 0,
-      likes: 0,
       cursor_properties: {
         color: '#3B82F6',
         size: 'medium',

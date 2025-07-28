@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
-import { FiBell, FiCheck, FiHeart, FiUserPlus, FiMessageSquare } from "react-icons/fi";
+import { FiBell, FiCheck, FiHeart, FiUserPlus, FiMessageSquare, FiAtSign, FiSettings } from "react-icons/fi";
 import Link from "next/link";
 
 interface Notification {
   id: string;
   user_id: string;
-  type: 'rule_like' | 'rule_download' | 'new_follower' | 'comment' | 'system';
+  type: 'follow' | 'comment' | 'mention' | 'system';
   title: string;
   message: string;
   data?: any;
@@ -106,14 +106,14 @@ export default function NotificationsPage() {
 
   const getNotificationIcon = (type: Notification['type']) => {
     switch (type) {
-      case 'rule_like':
-        return <FiHeart className="w-4 h-4 text-red-400" />;
-              case 'rule_download':
-          return <FiMessageSquare className="w-4 h-4 text-green-400" />;
-      case 'new_follower':
+      case 'follow':
         return <FiUserPlus className="w-4 h-4 text-blue-400" />;
       case 'comment':
         return <FiMessageSquare className="w-4 h-4 text-yellow-400" />;
+      case 'mention':
+        return <FiAtSign className="w-4 h-4 text-orange-400" />;
+      case 'system':
+        return <FiSettings className="w-4 h-4 text-gray-400" />;
       default:
         return <FiBell className="w-4 h-4 text-gray-400" />;
     }
@@ -121,12 +121,11 @@ export default function NotificationsPage() {
 
   const getNotificationLink = (notification: Notification) => {
     switch (notification.type) {
-      case 'rule_like':
-      case 'rule_download':
-        return notification.data?.rule_id ? `/cursor-rules/${notification.data.rule_id}` : '#';
-      case 'new_follower':
-        return notification.data?.follower_id ? `/profile/${notification.data.follower_id}` : '#';
+      case 'follow':
+        return notification.data?.follower_username ? `/profile/${notification.data.follower_username}` : '#';
       case 'comment':
+      case 'mention':
+      case 'system':
         return notification.data?.rule_id ? `/cursor-rules/${notification.data.rule_id}` : '#';
       default:
         return '#';

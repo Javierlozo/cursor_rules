@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET(request: NextRequest) {
   try {
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get unread notification count using direct query
-    const { count, error } = await supabase
+    const { count, error } = await supabaseAdmin
       .from("notifications")
       .select("*", { count: "exact", head: true })
       .eq("user_id", user.id)

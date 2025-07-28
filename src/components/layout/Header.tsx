@@ -60,6 +60,23 @@ export default function Header() {
   useEffect(() => {
     if (user) {
       fetchUnreadCount();
+      
+      // Refresh notification count every 30 seconds
+      const interval = setInterval(fetchUnreadCount, 30000);
+      
+      // Refresh when page becomes visible (user comes back to tab)
+      const handleVisibilityChange = () => {
+        if (!document.hidden) {
+          fetchUnreadCount();
+        }
+      };
+      
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      
+      return () => {
+        clearInterval(interval);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+      };
     }
   }, [user]);
 
@@ -82,7 +99,8 @@ export default function Header() {
 
       if (response.ok) {
         const data = await response.json();
-        setUnreadNotifications(data?.count || 0);
+        const count = data?.count || 0;
+        setUnreadNotifications(count);
       } else {
         console.warn("Failed to fetch unread notifications count:", response.status);
         setUnreadNotifications(0);
@@ -204,6 +222,7 @@ export default function Header() {
                     <NotificationsDropdown
                       isOpen={isNotificationsOpen}
                       onClose={() => setIsNotificationsOpen(false)}
+                      onNotificationUpdate={fetchUnreadCount}
                     />
                   </div>
               )}

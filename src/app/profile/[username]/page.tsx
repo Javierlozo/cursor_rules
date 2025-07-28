@@ -110,6 +110,7 @@ export default function PublicProfilePage() {
     try {
       if (isFollowing) {
         // Unfollow
+        console.log("🔄 Unfollowing user:", profile.user_id);
         const { error } = await supabase
           .from("user_follows")
           .delete()
@@ -117,6 +118,7 @@ export default function PublicProfilePage() {
           .eq("following_id", profile.user_id);
 
         if (!error) {
+          console.log("✅ Unfollowed successfully");
           setIsFollowing(false);
           setProfile((prev: PublicUserProfile | null) => prev ? {
             ...prev,
@@ -126,9 +128,12 @@ export default function PublicProfilePage() {
             },
             is_following: false,
           } : null);
+        } else {
+          console.error("❌ Error unfollowing:", error);
         }
       } else {
         // Follow
+        console.log("🔄 Following user:", profile.user_id);
         const { error } = await supabase
           .from("user_follows")
           .insert({
@@ -137,6 +142,7 @@ export default function PublicProfilePage() {
           });
 
         if (!error) {
+          console.log("✅ Followed successfully");
           setIsFollowing(true);
           setProfile((prev: PublicUserProfile | null) => prev ? {
             ...prev,
@@ -146,6 +152,8 @@ export default function PublicProfilePage() {
             },
             is_following: true,
           } : null);
+        } else {
+          console.error("❌ Error following:", error);
         }
       }
     } catch (error) {
