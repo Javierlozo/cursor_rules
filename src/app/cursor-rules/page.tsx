@@ -1,75 +1,39 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import CursorRulesList from "@/components/cursor-rules/CursorRulesList";
-import SearchBar from "@/components/cursor-rules/SearchBar";
-import { supabase } from "@/lib/supabase";
-import { CursorRule } from "@/lib/types/cursor-rule";
-
+import type { Metadata } from "next";
 import Link from "next/link";
+import CursorRulesClient from "@/components/cursor-rules/CursorRulesClient";
+
+export const metadata: Metadata = {
+  title: "Browse Cursor Rules",
+  description: "Discover and browse community-created Cursor AI coding rules. Find patterns for React, TypeScript, Python, and more. Boost your development productivity with custom AI behavior.",
+  keywords: ["cursor rules", "ai coding rules", "developer patterns", "react rules", "typescript rules", "python rules", "coding productivity"],
+  openGraph: {
+    title: "Browse Cursor Rules - AI Coding Patterns",
+    description: "Discover and browse community-created Cursor AI coding rules. Find patterns for React, TypeScript, Python, and more.",
+    url: "https://cursor-rules-hub.vercel.app/cursor-rules",
+    siteName: "Cursor Rules Hub",
+    images: [
+      {
+        url: "/og-rules.png",
+        width: 1200,
+        height: 630,
+        alt: "Browse Cursor Rules - AI Coding Patterns",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Browse Cursor Rules - AI Coding Patterns",
+    description: "Discover and browse community-created Cursor AI coding rules. Find patterns for React, TypeScript, Python, and more.",
+    images: ["/og-rules.png"],
+  },
+  alternates: {
+    canonical: "/cursor-rules",
+  },
+};
 
 export default function CursorRulesPage() {
-  const [rules, setRules] = useState<CursorRule[]>([]);
-  const [filteredRules, setFilteredRules] = useState<CursorRule[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Change useState to useEffect for data fetching
-  useEffect(() => {
-    const fetchRules = async () => {
-      try {
-        // Try to use the enhanced view first, fall back to regular table
-        let { data, error } = await supabase
-          .from("cursor_rules_with_creator")
-          .select("*");
-
-        // If view doesn't exist, use regular table
-        if (error && error.code === '42P01') {
-          const result = await supabase
-            .from("cursor_rules")
-            .select("*");
-          data = result.data;
-          error = result.error;
-        }
-
-        if (error) {
-          console.error("Error fetching rules:", error);
-          return;
-        }
-
-        const safeRules = data ?? [];
-        setRules(safeRules);
-        setFilteredRules(safeRules);
-      } catch (error) {
-        console.error("Error fetching rules:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchRules();
-  }, []); // Empty dependency array means this runs once on mount
-
-  const handleSearch = (query: string) => {
-    if (!query.trim()) {
-      setFilteredRules(rules);
-      return;
-    }
-
-    const searchTerms = query.toLowerCase().split(" ");
-    const filtered = rules.filter((rule) => {
-      const searchableText = `
-        ${rule.name.toLowerCase()}
-        ${rule.description?.toLowerCase() ?? ""}
-        ${rule.pattern?.toLowerCase() ?? ""}
-        ${rule.rule_content.toLowerCase()}
-      `;
-
-      return searchTerms.every((term) => searchableText.includes(term));
-    });
-
-    setFilteredRules(filtered);
-  };
-
   return (
     <main className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
@@ -83,21 +47,7 @@ export default function CursorRulesPage() {
           </Link>
         </div>
 
-        <div className="mb-6 max-w-2xl">
-          <SearchBar
-            onSearch={handleSearch}
-            placeholder="Search by name, description, or pattern..."
-          />
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-            <p className="mt-4 text-gray-400">Loading rules...</p>
-          </div>
-        ) : (
-          <CursorRulesList rules={filteredRules} />
-        )}
+        <CursorRulesClient />
       </div>
     </main>
   );

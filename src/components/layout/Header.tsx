@@ -137,9 +137,14 @@ export default function Header() {
           {/* Logo/Brand */}
           <Link
             href="/"
-            className="text-xl font-bold flex items-center gap-2 text-white"
+            className="text-xl font-bold flex items-center gap-3 text-white"
           >
-            Cursor Rules Hub
+            <img 
+              src="/Logo.png" 
+              alt="Cursor Rules Hub" 
+              className="h-8 w-auto"
+            />
+            <span className="hidden sm:inline">Cursor Rules Hub</span>
           </Link>
 
           {/* Desktop Navigation */}

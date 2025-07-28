@@ -1,52 +1,44 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
-import OnboardingModal from "@/components/OnboardingModal";
+import type { Metadata } from "next";
+import { WebsiteStructuredData } from "@/components/StructuredData";
+import HomeHero from "@/components/HomeHero";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Discover and share Cursor AI coding rules. Boost your productivity with custom AI behavior patterns. Join the community of developers building better coding experiences.",
+  keywords: ["cursor rules", "ai coding", "developer productivity", "coding patterns", "software development", "programming", "ai assistant"],
+  openGraph: {
+    title: "Cursor Rules Hub - Share & Discover AI Coding Rules",
+    description: "Discover and share Cursor AI coding rules. Boost your productivity with custom AI behavior patterns. Join the community of developers building better coding experiences.",
+    url: "https://cursor-rules-hub.vercel.app",
+    siteName: "Cursor Rules Hub",
+    images: [
+      {
+        url: "/og-home.png",
+        width: 1200,
+        height: 630,
+        alt: "Cursor Rules Hub - AI Coding Rules Community",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Cursor Rules Hub - Share & Discover AI Coding Rules",
+    description: "Discover and share Cursor AI coding rules. Boost your productivity with custom AI behavior patterns.",
+    images: ["/og-home.png"],
+  },
+  alternates: {
+    canonical: "/",
+  },
+};
 
 export default function HomePage() {
-  const [showOnboarding, setShowOnboarding] = useState(false);
-
-  // Show onboarding for new users (check if it's their first visit)
-  useEffect(() => {
-    const hasVisited = localStorage.getItem('cursor-rules-hub-visited');
-    if (!hasVisited) {
-      setShowOnboarding(true);
-      localStorage.setItem('cursor-rules-hub-visited', 'true');
-    }
-  }, []);
-
   return (
     <>
       <main className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
-        <section className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-white mb-8">Cursor Rules Hub</h1>
-          <p className="text-xl text-gray-400 mb-10 max-w-3xl mx-auto">
-            An independent community platform for sharing and discovering Cursor rules. 
-            Built by developers, for developers.
-          </p>
-          <div className="flex gap-4 justify-center flex-wrap">
-            <Link
-              href="/cursor-rules"
-              className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition font-medium"
-            >
-              Browse Rules
-            </Link>
-            <Link
-              href="/cursor-rules/create"
-              className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-medium"
-            >
-              Create Rule
-            </Link>
-            <button
-              onClick={() => setShowOnboarding(true)}
-              className="bg-gray-700 text-white px-6 py-3 rounded-lg hover:bg-gray-600 transition font-medium"
-            >
-              Quick Tour
-            </button>
-          </div>
-        </section>
+        <HomeHero />
 
         {/* Key Benefits */}
         <section className="mb-16">
@@ -161,10 +153,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <OnboardingModal 
-        isOpen={showOnboarding} 
-        onClose={() => setShowOnboarding(false)} 
-      />
+      <WebsiteStructuredData />
     </>
   );
 }

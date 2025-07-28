@@ -8,9 +8,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Section */}
           <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-700">
-            <h3 className="font-semibold mb-3 text-white">
-              About Cursor Rules Hub
-            </h3>
+            <div className="flex items-center gap-3 mb-3">
+              <img 
+                src="/Logo.png" 
+                alt="Cursor Rules Hub" 
+                className="h-8 w-auto"
+                />
+              <h3 className="font-semibold text-white">
+                About Cursor Rules Hub
+              </h3>
+            </div>
             <p className="text-gray-400 text-sm">
               A community-driven collection of AI behavior rules for the Cursor
               editor. Share and discover rules to enhance your coding

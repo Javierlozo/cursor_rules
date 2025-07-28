@@ -1,4 +1,36 @@
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Cursor Rules Hub",
+  description: "Learn about Cursor Rules Hub - an independent community platform for sharing and discovering Cursor AI coding rules. Built by developers, for developers.",
+  keywords: ["cursor rules", "ai coding", "developer community", "cursor editor", "coding productivity", "ai assistant", "programming"],
+  openGraph: {
+    title: "About Cursor Rules Hub - AI Coding Rules Community",
+    description: "Learn about Cursor Rules Hub - an independent community platform for sharing and discovering Cursor AI coding rules. Built by developers, for developers.",
+    url: "https://cursor-rules-hub.vercel.app/about",
+    siteName: "Cursor Rules Hub",
+    images: [
+      {
+        url: "/og-about.png",
+        width: 1200,
+        height: 630,
+        alt: "About Cursor Rules Hub - AI Coding Rules Community",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Cursor Rules Hub - AI Coding Rules Community",
+    description: "Learn about Cursor Rules Hub - an independent community platform for sharing and discovering Cursor AI coding rules.",
+    images: ["/og-about.png"],
+  },
+  alternates: {
+    canonical: "/about",
+  },
+};
 
 export default function AboutPage() {
   return (
